@@ -1,0 +1,23 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>Appel de charges</title>
+  <style>
+    body { font-family: Arial, sans-serif; line-height:1.4; }
+    .container { max-width:600px; margin:0 auto; padding:16px; }
+    .header { font-size:18px; margin-bottom:12px; }
+    .amount { font-size:22px; font-weight:700; color:#000; margin:12px 0; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">Dear {{ name }},</div>
+    <p>This is the call for charges. Amount due: </p>
+    <div class="amount">{{ amount }} &euro;</div>
+    <p>Please pay to the copropriété account by the due date.</p>
+    <p>Regards,<br/>Syndic</p>
+  </div>
+</body>
+</html>
