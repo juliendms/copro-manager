@@ -1,0 +1,13 @@
+{% macro dialog(id, title, action_url, method='POST') -%}
+<dialog id="{{ id }}" class="modal no-elevate">
+  <h5 class="bottom-margin">{{ title }}</h5>
+
+  <form method="{{ method }}" action="{{ action_url }}" data-dialog-form="{{ id }}">
+    {{ caller() }}
+    <div class="row right-align">
+      <button type="button" class="button transparent" data-ui="#{{ id }}">Cancel</button>
+      <button type="submit" class="button primary">Save</button>
+    </div>
+  </form>
+</dialog>
+{%- endmacro %}

@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block title %}Charge Repartition{% endblock %}
+
+{% block body_content %}
+    <h4>{{ charge.description }}</h4>
+    <ul class="no-space">
+        <li>
+            <p><strong>Total Amount:</strong> {{ "%.2f" | format(charge.total_amount) }} EUR</p>
+        </li>
+        <li>
+            <p><strong>Type:</strong> {{ charge.type.capitalize() }}</p>
+        </li>
+        <li>
+            {% if charge.type == 'common' %}
+                <p><strong>Year:</strong> {{ charge.year }}</p>
+            {% elif charge.type == 'extraordinary' %}
+                <p><strong>Purpose:</strong> {{ charge.purpose }}</p>
+            {% endif %}
+        </li>
+        <li>
+            <p><strong>Voting Date:</strong> {{ charge.voting_date.strftime('%Y-%m-%d') }}</p>
+        </li>
+    </ul>
+
+    <h5>Cost repartition per owner</h2>
+    <table class="border">
+        <thead>
+            <tr>
+                <th>Owner Name</th>
+                <th>Emails</th>
+                <th>Lot Number</th>
+                <th class="right-align">Share</th>
+                <th class="right-align">Amount Due</th>
+                <th class="left-padding">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for detail in repartition_details %}
+            <tr>
+                <td>{{ detail.owner.name }}</td>
+                <td>
+                    {% if detail.owner.emails %}
+                        {{ detail.owner.emails | map(attribute='email') | join(', ') }}
+                    {% else %}
+                        No emails
+                    {% endif %}
+                </td>
+                <td>{{ detail.owner.lot_number }}</td>
+                <td class="right-align">{{ detail.owner.share }}</td>
+                <td class="right-align">{{ "%.2f" | format(detail.amount) }}</td>
+                <td>
+                    {% if detail.owner.emails %}
+                        <form action="{{ url_for('charges.send_repartition_email', charge_id=charge.id, owner_id=detail.owner.id) }}" method="POST" class="inline-form">
+                            <button type="submit" class="button circle primary-container"><i>email</i></button>
+                        </form>
+                    {% else %}
+                        No emails to send
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

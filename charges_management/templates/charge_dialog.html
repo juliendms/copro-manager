@@ -1,0 +1,47 @@
+{# templates/components/dialog.html #}
+{% from "dialog.html" import dialog %}
+
+{% macro charge_dialog(id, title, action_url, charge=None) %}
+{%- set is_common = (charge is none) or (charge.type == 'common') -%}
+{% call dialog(id, title, action_url) %}
+  <div class="field label border">
+    <input type="text" id="description-{{ id }}" name="description"
+           value="{{ charge.description if charge else '' }}" required>
+    <label for="description-{{ id }}">Description</label>
+  </div>
+
+  <div class="field label border">
+    <input type="number" id="total_amount-{{ id }}" name="total_amount" step="0.01"
+           value="{{ charge.total_amount if charge else '' }}" required>
+    <label for="total_amount-{{ id }}">Total Amount</label>
+  </div>
+
+  <div class="field label border">
+    <select id="charge_type-{{ id }}" name="charge_type"
+            onchange="toggleChargeFields('{{ id }}')" required>
+      <option value="common" {{ 'selected' if is_common else '' }}>Common</option>
+      <option value="extraordinary" {{ 'selected' if not is_common else '' }}>Extraordinary</option>
+    </select>
+    <label for="charge_type-{{ id }}">Charge Type</label>
+  </div>
+
+  <div class="field label border" id="year-group-{{ id }}" {% if not is_common %}style="display:none;"{% endif %}>
+    <input type="number" id="year-{{ id }}" name="year"
+           value="{{ charge.year if charge else '' }}" {{ 'required' if is_common else '' }}>
+    <label for="year-{{ id }}">Year</label>
+  </div>
+
+  <div class="field label border" id="purpose-group-{{ id }}" {% if is_common %}style="display:none;"{% endif %}>
+    <input type="text" id="purpose-{{ id }}" name="purpose"
+           value="{{ charge.purpose if charge else '' }}" {{ 'required' if not is_common else '' }}>
+    <label for="purpose-{{ id }}">Purpose</label>
+  </div>
+
+  <div class="field label border">
+    <input type="date" id="voting_date-{{ id }}" name="voting_date"
+           value="{{ charge.voting_date.strftime('%Y-%m-%d') if charge and charge.voting_date else '' }}"
+           required>
+    <label for="voting_date-{{ id }}">Voting Date</label>
+  </div>
+{% endcall %}
+{% endmacro %}

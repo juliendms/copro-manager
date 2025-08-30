@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Homeowner Association Manager{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/beercss@3.11.33/dist/cdn/beer.min.css" rel="stylesheet">  
+    <script type="module" src="https://cdn.jsdelivr.net/npm/beercss@3.11.33/dist/cdn/beer.min.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    {% block head_content %}{% endblock %}
+</head>
+<body>
+    <nav class="left max surface-variant l">
+        <a class="auto-width {% if request.endpoint == 'index' %}active{% endif %}" href="{{ url_for('index') }}">
+            <i>home</i>
+            <div>Overview</div>
+        </a>
+        <a class="{% if request.endpoint.startswith('owner_bp.') %}active{% endif %}" href="{{ url_for('owner_bp.list_owners') }}">
+            <i>group</i>
+            <div>Owners</div>
+        </a>
+        <a class="{% if request.endpoint.startswith('charges.') %}active{% endif %}" href="{{ url_for('charges.list_charges') }}">
+            <i>construction</i>
+            <div>Charges</div>
+        </a>
+    </nav>
+    <nav class="left large-space surface-variant m">
+        <a class="{% if request.endpoint == 'index' %}active{% endif %}" href="{{ url_for('index') }}">
+            <i>home</i>
+            <div>Overview</div>
+        </a>
+        <a class="{% if request.endpoint.startswith('owner_bp.') %}active{% endif %}" href="{{ url_for('owner_bp.list_owners') }}">
+            <i>group</i>
+            <div>Owners</div>
+        </a>
+        <a class="{% if request.endpoint.startswith('charges.') %}active{% endif %}" href="{{ url_for('charges.list_charges') }}">
+            <i>construction</i>
+            <div>Charges</div>
+        </a>
+    </nav>
+    <main class="responsive">
+        {% block body_content %}{% endblock %}
+    </main>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div id="flash-messages">
+                {% for category, message in messages %}
+                    <div class="flash-message {{ category }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+</body>
+</html>

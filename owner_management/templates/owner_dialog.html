@@ -1,0 +1,30 @@
+{# templates/components/owner_dialog.html #}
+{% from "dialog.html" import dialog %}
+
+{% macro owner_dialog(id, title, action_url, owner=None) %}
+{% call dialog(id, title, action_url) %}
+  <div class="field label border">
+    <input type="text" id="name-{{ id }}" name="name"
+           value="{{ owner.name if owner else '' }}" required>
+    <label for="name-{{ id }}">Name</label>
+  </div>
+
+  <div class="field label border">
+    <input type="text" id="lot_number-{{ id }}" name="lot_number"
+           value="{{ owner.lot_number if owner else '' }}" required>
+    <label for="lot_number-{{ id }}">Lot Number</label>
+  </div>
+
+  <div class="field label border">
+    <input type="number" id="share-{{ id }}" name="share" step="any"
+           value="{{ owner.share if owner else '' }}" required>
+    <label for="share-{{ id }}">Share</label>
+  </div>
+
+  <div class="field label border">
+    <input type="text" id="emails-{{ id }}" name="emails"
+           value="{{ owner.emails | map(attribute='email') | join(', ') if owner and owner.emails else '' }}">
+    <label for="emails-{{ id }}">Emails</label>
+  </div>
+{% endcall %}
+{% endmacro %}
