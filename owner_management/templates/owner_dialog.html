@@ -1,30 +1,20 @@
-{# templates/components/owner_dialog.html #}
 {% from "dialog.html" import dialog %}
 
-{% macro owner_dialog(id, title, action_url, owner=None) %}
-{% call dialog(id, title, action_url) %}
+{% call dialog(title, action_url, method='POST', form_hx_post=action_url, form_hx_target='#owners-table', form_hx_swap='innerHTML') %}
   <div class="field label border">
-    <input type="text" id="name-{{ id }}" name="name"
-           value="{{ owner.name if owner else '' }}" required>
-    <label for="name-{{ id }}">Name</label>
+    <input type="text" id="name" name="name" value="{{ owner.name if owner else '' }}" required>
+    <label for="name">Name</label>
   </div>
-
   <div class="field label border">
-    <input type="text" id="lot_number-{{ id }}" name="lot_number"
-           value="{{ owner.lot_number if owner else '' }}" required>
-    <label for="lot_number-{{ id }}">Lot Number</label>
+    <input type="text" id="emails" name="emails" value="{{ owner.emails | map(attribute='email') | join(', ') if owner and owner.emails else '' }}">
+    <label for="emails">Emails (comma-separated)</label>
   </div>
-
   <div class="field label border">
-    <input type="number" id="share-{{ id }}" name="share" step="any"
-           value="{{ owner.share if owner else '' }}" required>
-    <label for="share-{{ id }}">Share</label>
+    <input type="text" id="lot_number" name="lot_number" value="{{ owner.lot_number if owner else '' }}" required>
+    <label for="lot_number">Lot Number</label>
   </div>
-
   <div class="field label border">
-    <input type="text" id="emails-{{ id }}" name="emails"
-           value="{{ owner.emails | map(attribute='email') | join(', ') if owner and owner.emails else '' }}">
-    <label for="emails-{{ id }}">Emails</label>
+    <input type="number" id="share" name="share" value="{{ owner.share if owner else '' }}" required>
+    <label for="share">Share</label>
   </div>
 {% endcall %}
-{% endmacro %}

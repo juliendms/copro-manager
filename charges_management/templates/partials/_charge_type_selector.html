@@ -1,0 +1,20 @@
+<div id="charge-type-container">
+  <nav class="group connected bottom-margin fill-space">
+    <button class="left-round {{ 'active' if is_common else '' }}"
+        hx-get="{{ url_for('charges.type_fields') }}?type=common{% if charge %}&charge_id={{ charge.id }}{% endif %}"
+        hx-target="#charge-type-container"
+        hx-swap="outerHTML">Common</button>
+    <button class="right-round {{ 'active' if not is_common else '' }}"
+        hx-get="{{ url_for('charges.type_fields') }}?type=extraordinary{% if charge %}&charge_id={{ charge.id }}{% endif %}"
+        hx-target="#charge-type-container"
+        hx-swap="outerHTML">Extraordinary</button>
+  </nav>
+
+  <div id="type-fields">
+    {% if is_common %}
+      {% include 'partials/charge_type_fields_common.html' %}
+    {% else %}
+      {% include 'partials/charge_type_fields_extraordinary.html' %}
+    {% endif %}
+  </div>
+</div>

@@ -10,10 +10,6 @@ body {
     font-optical-sizing: auto;
 }
 
-.flashes {
-    margin-top: 20px;
-}
-
 form {
     display: inline;
 }
@@ -34,115 +30,58 @@ dialog {
     background-color: var(--surface-container-low);
 }
 
-// .container {
-//     background-color: $text-light;
-//     padding: 20px;
-//     max-width: 600px;
-//     margin: 20px auto;
-// }
-
-// .form-group {
-//     margin-bottom: 15px;
-
-//     label {
-//         display: block;
-//         margin-bottom: 5px;
-//         font-weight: bold;
-//     }
-
-//     input[type="text"],
-//     input[type="number"],
-//     input[type="date"],
-//     textarea {
-//         width: 100%;
-//         padding: 10px;
-//         border: 1px solid $border-light;
-//         border-radius: 4px;
-//         box-sizing: border-box;
-//     }
-
-//     textarea {
-//         resize: vertical;
-//         min-height: 80px;
-//     }
-// }
-
-// .alert {
-//     padding: 10px;
-//     margin-bottom: 15px;
-//     border-radius: 4px;
-//     opacity: 1;
-//     transition: opacity 0.6s;
-
-//     &.success {
-//         background-color: lighten($success-color, 45%);
-//         color: darken($success-color, 20%);
-//         border: 1px solid lighten($success-color, 35%);
-//     }
-
-//     &.danger {
-//         background-color: lighten($danger-color, 45%);
-//         color: darken($danger-color, 20%);
-//         border: 1px solid lighten($danger-color, 35%);
-//     }
-
-//     &.warning {
-//         background-color: lighten($warning-color, 35%);
-//         color: darken($warning-color, 20%);
-//         border: 1px solid lighten($warning-color, 25%);
-//     }
-// }
+.holding {
+  transition:
+    background-color var(--hold-duration, 0.3s) ease-out,
+    color var(--hold-duration, 0.3s) ease-out;
+}
 
 /* Flash Messages (Snackbars) */
 #flash-messages {
-  position: fixed;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 1000;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  width: 90%;
-  max-width: 500px;
+    position: absolute;
+    bottom: 4rem;
+    left: 50%;
+    align-items: center;
+    transform: translateX(-50%);
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    width: 100%;
 }
 
-.flash-message {
-  background-color: #333;
-  color: #fff;
-  padding: 12px 20px;
-  border-radius: 8px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-  text-align: center;
-  font-size: 16px;
-  opacity: 0;
-  transform: translateY(100%);
-  animation: slideIn 0.5s forwards,
-             fadeOut 0.5s forwards 5s; /* Fade out after 5 seconds */
-}
+.snackbar.flash-message {
+    inset: unset;
+    visibility: visible;
+    position: relative;
+    opacity: 0;
+    transform: translateY(100%);
+    animation: slideIn 0.5s forwards, fadeOut 0.5s forwards 4s; /* Fade out after 4 seconds */
 
-.flash-message.success {
-  background-color: #4CAF50; /* Green for success */
-}
+    &.dismiss {
+        animation: fadeOut 0.5s forwards;
+    }
 
-.flash-message.danger {
-  background-color: #f44336; /* Red for danger */
-}
-
-.flash-message.warning {
-  background-color: #ff9800; /* Orange for warning */
+    @media only screen and (min-width: 993px) {
+        width: 40vw;
+    }
 }
 
 @keyframes slideIn {
-  to {
-    opacity: 1;
-    transform: translateY(0%);
-  }
+    to {
+        opacity: 1;
+        transform: translateY(0%);
+    }
+}
+@keyframes fadeOut {
+    to {
+        opacity: 0;
+        transform: translateY(-100%);
+    }
 }
 
-@keyframes fadeOut {
-  to {
-    opacity: 0;
-    transform: translateY(-100%);
+.fill-space {
+  & > * {
+    flex-grow: 1 !important;
   }
 }

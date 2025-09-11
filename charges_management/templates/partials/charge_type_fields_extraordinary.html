@@ -1,0 +1,41 @@
+<input type="hidden" name="charge_type" value="extraordinary">
+<div class="field label border">
+  <input type="text" id="purpose" name="purpose"
+         value="{{ charge.purpose if charge else '' }}" required>
+  <label for="purpose">Purpose</label>
+</div>
+
+<fieldset>
+  <legend>Select one or more owners</legend>
+  {% if charge and charge.owners %}
+    {% set charge_owner_ids = charge.owners | map(attribute='id') | list %}
+  {% else %}
+    {% set charge_owner_ids = [] %}
+  {% endif %}
+  <div class="grid">
+    {% set midpoint = (owners | length / 2) | round(method='ceil') | int %}
+    <div class="s12 m6 l6">
+      <nav class="vertical">
+        {% for owner in owners[:midpoint] %}
+        <label class="checkbox">
+          <input type="checkbox" name="owners" value="{{ owner.id }}"
+                 {% if charge is none or owner.id in charge_owner_ids %}checked{% endif %}>
+          <span>{{ owner.name }}</span>
+        </label>
+        {% endfor %}
+      </nav>
+    </div>
+    <div class="s12 m6 l6">
+      <nav class="vertical">
+        {% for owner in owners[midpoint:] %}
+        <label class="checkbox">
+          <input type="checkbox" name="owners" value="{{ owner.id }}"
+                 {% if charge is none or owner.id in charge_owner_ids %}checked{% endif %}>
+          <span>{{ owner.name }}</span>
+        </label>
+        {% endfor %}
+      </nav>
+    </div>
+  </div>
+</fieldset>
+

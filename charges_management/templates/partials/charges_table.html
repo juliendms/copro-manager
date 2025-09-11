@@ -1,0 +1,56 @@
+<table class="border">
+  <thead>
+    <tr>
+      <th>Description</th>
+      <th>Type</th>
+      <th>Details</th>
+      <th class="right-align right-padding">Total Amount</th>
+      <th class="left-padding">Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for charge in charges %}
+      <tr>
+        <td>{{ charge.description }}</td>
+        <td>{{ charge.type.capitalize() }}</td>
+        <td>
+          {% if charge.type == 'common' %}
+            Year: {{ charge.year }}
+          {% elif charge.type == 'extraordinary' %}
+            Purpose: {{ charge.purpose }}
+          {% endif %}
+        </td>
+        <td class="right-align right-padding">{{ "%.2f" | format(charge.total_amount) }}</td>
+        <td class="left-padding" style="width: 1%">
+          <nav class="group">
+            <a href="{{ url_for('charges.view_repartition', charge_id=charge.id) }}"
+              class="button small circle fill">
+              <i>visibility</i>
+            </a>
+            <button class="small circle border"
+              data-ui="dialog"
+              hx-get="{{ url_for('charges.dialog_fragment') }}?mode=edit&charge_id={{ charge.id }}"
+              hx-target="#dialog"
+              hx-swap="innerHTML">
+              <i>edit</i>
+            </button>
+            <button class="small circle border holding"
+                    hx-delete="{{ url_for('charges.delete_charge', charge_id=charge.id) }}"
+                    hx-target="#charges-table"
+                    hx-swap="innerHTML"
+                    hx-trigger="hold-complete"
+                    onmousedown="startHold(this)"
+                    onmouseup="cancelHold(this)"
+                    onmouseleave="cancelHold(this)"
+                    ontouchstart="startHold(this)"
+                    ontouchend="cancelHold(this)">
+              <i>delete</i>
+              <div class="tooltip left">Hold to delete</div>
+            </button>
+          </nav>
+        </td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+

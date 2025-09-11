@@ -1,128 +1,26 @@
 {% extends "base.html" %}
-{% from "charge_dialog.html" import charge_dialog %}
 
 {% block title %}Charges List{% endblock %}
 
 {% block body_content %}
-    <a class="button square extend no-margin" data-ui="#add-charge-dialog">
+    <button class="extend circle right-round top-round no-margin"
+       data-ui="dialog"
+       hx-get="{{ url_for('charges.dialog_fragment') }}?mode=add"
+       hx-target="#dialog"
+       hx-swap="innerHTML">
         <i>assignment_add</i>
         <span>Add a charge</span>
-    </a>
+    </button>
 
-    {{ charge_dialog("add-charge-dialog", "Add a charge", url_for('charges.add_charge')) }}
+    {# Edit buttons now live inside the table fragment #}
 
-    {% for charge in charges %}
-        {{ charge_dialog("edit-charge-" ~ charge.id,
-                         "Edit charge",
-                         url_for('charges.edit_charge', charge_id=charge.id),
-                         charge) }}
-    {% endfor %}
+    <div id="charges-table"
+         class="top-margin"
+         hx-get="{{ url_for('charges.table_fragment') }}"
+         hx-trigger="load"
+         hx-swap="innerHTML">
+      <!-- table loads here via HTMX -->
+    </div>
 
-    <table class="border">
-        <thead>
-            <tr>
-                <th>Description</th>
-                <th>Type</th>
-                <th>Details</th>
-                <th>Total Amount</th>
-                <th>Date Created</th>
-                <th class="left-padding">Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for charge in charges %}
-            <tr>
-                <td>{{ charge.description }}</td>
-                <td>{{ charge.type.capitalize() }}</td>
-                <td>
-                    {% if charge.type == 'common' %}
-                        Year: {{ charge.year }}
-                    {% elif charge.type == 'extraordinary' %}
-                        Purpose: {{ charge.purpose }}
-                    {% endif %}
-                </td>
-                <td>{{ "%.2f" | format(charge.total_amount) }}</td>
-                <td>{{ charge.date_created.strftime('%Y-%m-%d') }}</td>
-                <td>
-                    <a href="{{ url_for('charges.view_repartition', charge_id=charge.id) }}"
-                       class="button circle secondary-container">
-                        <i>visibility</i>
-                    </a>
-                    <a class="button circle secondary-container"
-                       data-ui="#edit-charge-{{ charge.id }}">
-                        <i>edit</i>
-                    </a>
-                    <form action="{{ url_for('charges.delete_charge', charge_id=charge.id) }}"
-                          method="POST" class="inline-form"
-                          onsubmit="return confirm('Are you sure you want to delete this charge?');">
-                        <button type="submit" class="border circle"><i>delete</i></button>
-                    </form>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-
-    <script>
-        function toggleChargeFields(dialogId) {
-            const select = document.getElementById('charge_type-' + dialogId);
-            if (!select) return;
-
-            const isCommon = select.value === 'common';
-            const yearGroup = document.getElementById('year-group-' + dialogId);
-            const purposeGroup = document.getElementById('purpose-group-' + dialogId);
-            const yearInput = document.getElementById('year-' + dialogId);
-            const purposeInput = document.getElementById('purpose-' + dialogId);
-
-            if (isCommon) {
-                if (yearGroup) yearGroup.style.display = 'block';
-                if (purposeGroup) purposeGroup.style.display = 'none';
-                if (yearInput) yearInput.required = true;
-                if (purposeInput) purposeInput.required = false;
-            } else {
-                if (yearGroup) yearGroup.style.display = 'none';
-                if (purposeGroup) purposeGroup.style.display = 'block';
-                if (yearInput) yearInput.required = false;
-                if (purposeInput) purposeInput.required = true;
-            }
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            document.querySelectorAll('dialog').forEach(dialog => {
-                // ensure fields are correct when dialog opens
-                dialog.addEventListener('open', () => {
-                    toggleChargeFields(dialog.id);
-                });
-
-                // some UI libraries open dialogs without emitting 'open'
-                // call toggle once in case dialog is visible already
-                toggleChargeFields(dialog.id);
-
-                // ajax submit handling for all dialog forms
-                const form = dialog.querySelector('form');
-                if (!form) return;
-                form.addEventListener('submit', async (event) => {
-                    event.preventDefault();
-                    const frm = event.currentTarget;
-                    // HTML5 required will block submit if fields missing.
-                    if (!frm.checkValidity()) {
-                        frm.reportValidity();
-                        return;
-                    }
-                    const formData = new FormData(frm);
-                    const response = await fetch(frm.action, {
-                        method: frm.method,
-                        body: formData,
-                        headers: { 'X-Requested-With': 'XMLHttpRequest' }
-                    });
-                    if (response.ok) {
-                        dialog.close();
-                        location.reload();
-                    } else {
-                        console.error('Form submission failed');
-                    }
-                });
-            });
-        });
-    </script>
+    <!-- No custom JS; HTMX handles dialog loading and table updates -->
 {% endblock %}

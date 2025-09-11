@@ -1,7 +1,7 @@
 # app.py
 import os
 
-from flask import Flask, render_template
+from flask import Flask, render_template, url_for
 from models import db
 from dotenv import load_dotenv
 
@@ -28,6 +28,11 @@ def initial_db_setup():
 @app.route('/')
 def index():
     return render_template('index.html')
+
+@app.route('/fragments/flash')
+def flash_fragment():
+    # Render only the flash messages content; base listens for flash-refresh
+    return render_template('partials/flash_messages.html')
 
 
 if __name__ == '__main__':

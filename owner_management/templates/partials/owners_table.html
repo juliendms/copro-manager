@@ -1,0 +1,45 @@
+<table class="border">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Emails</th>
+      <th>Lot Number</th>
+      <th class="right-align right-padding">Share</th>
+      <th class="left-padding">Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for owner in owners %}
+    <tr>
+      <td>{{ owner.name }}</td>
+      <td>{{ owner.emails | map(attribute='email') | join(', ') }}</td>
+      <td>{{ owner.lot_number }}</td>
+      <td class="right-align right-padding">{{ owner.share }}</td>
+      <td class="left-padding" style="width: 1%">
+        <nav class="group">
+          <button  class="small circle secondary-container"
+              data-ui="dialog"
+              hx-get="{{ url_for('owner.dialog_fragment', mode='edit', owner_id=owner.id) }}"
+              hx-target="#dialog"
+              hx-swap="innerHTML">
+            <i>person_edit</i>
+          </button>
+          <button class="small circle border holding"
+                  hx-delete="{{ url_for('owner.delete_owner', owner_id=owner.id) }}"
+                  hx-target="#owners-table"
+                  hx-swap="innerHTML"
+                  hx-trigger="hold-complete"
+                  onmousedown="startHold(this)"
+                  onmouseup="cancelHold(this)"
+                  onmouseleave="cancelHold(this)"
+                  ontouchstart="startHold(this)"
+                  ontouchend="cancelHold(this)">
+            <i>person_remove</i>
+            <div class="tooltip left">Hold to delete</div>
+          </button>
+        </nav>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
