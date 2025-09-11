@@ -236,7 +236,7 @@ def send_repartition_email(charge_id, owner_id):
             return redirect(url_for('charges.view_repartition', charge_id=charge_id))
 
         try:
-            creds, gmail, sheets, oauth2 = get_services()
+            creds, gmail, oauth2 = get_services()
             account_email, account_name = get_account_info(oauth2)
 
             if not account_email:
@@ -259,14 +259,15 @@ def send_repartition_email(charge_id, owner_id):
             flash(f"Error sending email to {owner.name}: {e}", 'danger')
             print(f"DEBUG: General Exception during email send: {e}")
 
-    if request.headers.get('HX-Request'):
-        repartition_details = {
-            'repartition': repartition,
-            'amount': owner_amount
-        }
-        return render_template('partials/_repartition_row.html', detail=repartition_details, charge=charge)
+        if request.headers.get('HX-Request'):
+            repartition_details = {
+                'repartition': repartition,
+                'amount': owner_amount
+            }
+            return render_template('partials/_repartition_row.html', detail=repartition_details, charge=charge)
 
-    return redirect(url_for('charges.view_repartition', charge_id=charge_id))
+        return redirect(url_for('charges.view_repartition', charge_id=charge_id))
+
 
 @charges_bp.route('/<int:charge_id>/repartition/mark_as_paid/<int:owner_id>', methods=['POST'])
 def mark_as_paid(charge_id, owner_id):
@@ -294,4 +295,4 @@ def mark_as_paid(charge_id, owner_id):
             }
             return render_template('partials/_repartition_row.html', detail=repartition_details, charge=charge)
 
-    return redirect(url_for('charges.view_repartition', charge_id=charge_id))
+        return redirect(url_for('charges.view_repartition', charge_id=charge_id))

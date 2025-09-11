@@ -72,4 +72,12 @@ dialog {
   flex-grow: 1 !important;
 }
 
+.semi-bold {
+  font-weight: 600;
+}
+
+.hidden {
+  visibility: hidden;
+}
+
 /*# sourceMappingURL=style.css.map */

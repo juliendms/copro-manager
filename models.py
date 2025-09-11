@@ -59,5 +59,18 @@ class Charge(db.Model):
     repartitions = db.relationship('ChargeRepartition', back_populates='charge', cascade="all, delete-orphan")
     owners = association_proxy('repartitions', 'owner')
 
+    @property
+    def status(self):
+        if not self.repartitions:
+            return 'New'
+
+        repartition_statuses = {repartition.status for repartition in self.repartitions}
+
+        if repartition_statuses == {'Paid'}:
+            return 'Closed'
+        if repartition_statuses == {'Draft'}:
+            return 'New'
+        return 'Ongoing'
+
     def __repr__(self):
         return f'<Charge {self.description} ({self.type})>'

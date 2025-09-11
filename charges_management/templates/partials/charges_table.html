@@ -3,7 +3,8 @@
     <tr>
       <th>Description</th>
       <th>Type</th>
-      <th>Details</th>
+      <th class="l">Details</th>
+      <th>Status</th>
       <th class="right-align right-padding">Total Amount</th>
       <th class="left-padding">Actions</th>
     </tr>
@@ -13,12 +14,24 @@
       <tr>
         <td>{{ charge.description }}</td>
         <td>{{ charge.type.capitalize() }}</td>
-        <td>
+        <td class="l">
           {% if charge.type == 'common' %}
             Year: {{ charge.year }}
           {% elif charge.type == 'extraordinary' %}
             Purpose: {{ charge.purpose }}
           {% endif %}
+        </td>
+        <td>
+          {% set status_styles = {
+            'New': {'class': 'secondary', 'text': 'New'},
+            'Ongoing': {'class': 'tertiary', 'text': 'Ongoing'},
+            'Closed': {'class': 'grey', 'text': 'Closed'}
+          } %}
+          {% set style = status_styles.get(charge.status, {'class': 'grey', 'text': 'Unknown'}) %}
+          <div class="row" style="gap: 0.5rem;">
+            <div class="badge none min {{ style.class }}"></div>
+            <span class="{{ style.class }}-text semi-bold">{{ style.text }}</span>
+          </div>
         </td>
         <td class="right-align right-padding">{{ "%.2f" | format(charge.total_amount) }}</td>
         <td class="left-padding" style="width: 1%">
