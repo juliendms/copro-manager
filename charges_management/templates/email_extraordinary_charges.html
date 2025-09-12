@@ -7,7 +7,7 @@
     <style>
         body {
             font-family: 'Roboto', sans-serif;
-            background-color: #fafafa;
+            background-color: #f7f2f7;
             color: #222;
             margin: 0;
             padding: 0;
@@ -17,8 +17,8 @@
         .container {
             max-width: 600px;
             margin: 16px auto;
-            background-color: #FFFFFF;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            background-color: #Fdf8fd;
+            box-shadow: 0 .125rem .125rem 0 rgb(0 0 0 / .32);
             padding: 32px;
             border: 1px solid #D7CCC8; /* Pierre dorée */
             border-radius: 4px;
@@ -26,20 +26,20 @@
         .header, .footer {
             color: #ba5822; /* Brun foncé */
             background-color: #faf1e2; /* Beige léger */
-            padding: 10px 20px;
+            padding: 1rem;
             text-align: center;
             border-radius: 4px;
         }
         .content {
-            padding: 16px 0;
+            padding: 1rem 0;
         }
         .content strong {
             color: #ba5822; /* Orange brûlé */
         }
         .highlight {
-            padding: 8px;
+            padding: 0.5rem 2rem;
             border-left: 3px solid #f2dcb6;
-            margin: 10px 0;
+            margin: 1rem 0;
         }
     </style>
 </head>
@@ -51,11 +51,11 @@
         <div class="content">
             <p>Bonjour,</p>
             <p>Je vous informe que votre participation aux travaux de <strong>{{purpose}}</strong> s'élève à <strong>{{amount_due}} EUR</strong>. Pour rappel, le devis validé lors de l'assemblée générale du <strong>{{voting_date}}</strong> s'élève à un total de <strong>{{total_budget}} EUR</strong>.</p>
-            <div class="highlight">
-                <p><strong>Lot(s) :</strong> {{lot}}</p>
-                <p><strong>Tantième :</strong> {{share}}</p>
-                <p><strong>Quote-part:</strong> {{amount_due}} EUR</p>
-            </div>
+            <ul class="highlight">
+                <li><strong>Lot(s) :</strong> {{lot}}</li>
+                <li><strong>Tantième :</strong> {{share}}</li>
+                <li><strong>Quote-part: {{amount_due}} EUR</strong></li>
+            </ul>
             <p>Je vous prie de régler cette somme dans un délai de 30 jours, selon les modalités habituelles de paiement.</p>
             <p>Je reste à votre disposition pour toute question éventuelle.</p>
             <p>Cordialement,</p>

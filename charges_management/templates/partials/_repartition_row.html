@@ -1,8 +1,8 @@
-<tr id="repartition-row-{{ detail.repartition.owner_id }}">
-    <td>{{ detail.repartition.owner.name }}</td>
+<tr id="repartition-row-{{ installment.id }}">
+    <td>{{ installment.charge_repartition.owner.name }}</td>
     <td>
-        {% if detail.repartition.owner.emails %}
-            {{ detail.repartition.owner.emails | map(attribute='email') | join(', ') }}
+        {% if installment.charge_repartition.owner.emails %}
+            {{ installment.charge_repartition.owner.emails | map(attribute='email') | join(', ') }}
         {% else %}
             No emails
         {% endif %}
@@ -13,29 +13,29 @@
             'Sent': {'class': 'tertiary', 'text': 'Sent'},
             'Draft': {'class': 'grey', 'text': 'Draft'}
         } %}
-        {% set style = status_styles.get(detail.repartition.status, {'class': 'grey', 'text': 'Unknown'}) %}
+        {% set style = status_styles.get(installment.status, {'class': 'grey', 'text': 'Unknown'}) %}
         <div class="row" style="gap: 0.5rem;">
             <div class="badge none min {{ style.class }}"></div>
             <span class="{{ style.class }}-text semi-bold">{{ style.text }}</span>
         </div>
     </td>
-    <td>{{ detail.repartition.owner.lot_number }}</td>
-    <td class="right-align">{{ detail.repartition.owner.share }}</td>
-    <td class="right-align right-padding">{{ "%.2f" | format(detail.amount) }}</td>
+    <td>{{ installment.charge_repartition.owner.lot_number }}</td>
+    <td class="right-align">{{ installment.charge_repartition.owner.share }}</td>
+    <td class="right-align right-padding">{{ "%.2f" | format(installment.amount) }}</td>
     <td class="left-padding" style="width: 1%">
         <nav class="group">
-            {% if detail.repartition.owner.emails and detail.repartition.status != 'Paid' %}
-                <button hx-post="{{ url_for('charges.send_repartition_email', charge_id=charge.id, owner_id=detail.repartition.owner_id) }}" 
+            {% if installment.charge_repartition.owner.emails and installment.status != 'Paid' %}
+                <button hx-post="{{ url_for('charges.send_repartition_email', installment_id=installment.id) }}" 
                         class="small circle fill"
-                        hx-target="#repartition-row-{{ detail.repartition.owner_id }}"
+                        hx-target="#repartition-row-{{ installment.id }}"
                         hx-swap="outerHTML">
                     <i>email</i>
                 </button>
             {% endif %}
 
-            <button hx-post="{{ url_for('charges.mark_as_paid', charge_id=charge.id, owner_id=detail.repartition.owner_id) }}" 
-                    class="small circle fill {{ 'hidden' if detail.repartition.status == 'Paid' else '' }}"
-                    hx-target="#repartition-row-{{ detail.repartition.owner_id }}"
+            <button hx-post="{{ url_for('charges.mark_as_paid', installment_id=installment.id) }}" 
+                    class="small circle fill {{ 'hidden' if installment.status == 'Paid' else '' }}"
+                    hx-target="#repartition-row-{{ installment.id }}"
                     hx-swap="outerHTML">
                 <i>attach_money</i>
             </button>

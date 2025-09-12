@@ -3,6 +3,7 @@
     <tr>
       <th>Description</th>
       <th>Type</th>
+      <th>Schedule</th>
       <th class="l">Details</th>
       <th>Status</th>
       <th class="right-align right-padding">Total Amount</th>
@@ -14,6 +15,7 @@
       <tr>
         <td>{{ charge.description }}</td>
         <td>{{ charge.type.capitalize() }}</td>
+        <td>{{ charge.payment_schedule.replace('_', ' ').capitalize() }}</td>
         <td class="l">
           {% if charge.type == 'common' %}
             Year: {{ charge.year }}

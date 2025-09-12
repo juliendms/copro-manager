@@ -1,0 +1,7 @@
+{% for i in range(1, 5) %}
+<a href="{{ url_for('charges.view_repartition', charge_id=charge.id, quarter=i) }}"
+   class="chip {{ 'active' if selected_quarter == i else 'grey-text' if quarter_completion.get(i) else ''}}">
+    {% if quarter_completion.get(i) %}<i>check_small</i>{% endif %}
+    <span>Quarter {{ i }}</span>
+</a>
+{% endfor %}

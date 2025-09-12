@@ -3,11 +3,11 @@
     <button class="left-round {{ 'active' if is_common else '' }}"
         hx-get="{{ url_for('charges.type_fields') }}?type=common{% if charge %}&charge_id={{ charge.id }}{% endif %}"
         hx-target="#charge-type-container"
-        hx-swap="outerHTML">Common</button>
+        hx-swap="outerHTML" {% if charge and charge.repartitions %}disabled{% endif %}>Common</button>
     <button class="right-round {{ 'active' if not is_common else '' }}"
         hx-get="{{ url_for('charges.type_fields') }}?type=extraordinary{% if charge %}&charge_id={{ charge.id }}{% endif %}"
         hx-target="#charge-type-container"
-        hx-swap="outerHTML">Extraordinary</button>
+        hx-swap="outerHTML" {% if charge and charge.repartitions %}disabled{% endif %}>Extraordinary</button>
   </nav>
 
   <div id="type-fields">
