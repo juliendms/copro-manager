@@ -5,6 +5,7 @@ from flask import Flask, render_template, url_for
 from models import db, Charge, Owner, ChargeRepartition, PaymentInstallment
 from sqlalchemy.orm import joinedload
 from dotenv import load_dotenv
+from app_utils import no_cache
 
 from owner_management import owner_bp # Import the blueprint
 from charges_management import charges_bp # Import the charges blueprint
@@ -27,6 +28,7 @@ def initial_db_setup():
     return "Database tables created!"
 
 @app.route('/')
+@no_cache
 def index():
     charges = Charge.query.options(
         joinedload(Charge.repartitions)

@@ -1,9 +1,4 @@
-// /* Variables */
-// $primary-color: #8fc83a; // Used for primary actions, buttons, links
-// $background-light: #f4f4f4;
-// $text-light: #fff;
-// $border-light: #ddd;
-
+/* Body: Set font and theme */
 body {
     --font: "Nunito", sans-serif;
     font-optical-sizing: auto;
@@ -13,10 +8,7 @@ body {
     }
 }
 
-form {
-    display: inline;
-}
-
+/* Navigation rail: <a> elements that are stretched to the width of the rail */
 nav.max {
     &.left {
         gap: 1rem;
@@ -28,18 +20,20 @@ nav.max {
     }
 }
 
+/* Dialog: custom width and background color */
 dialog {
     width: 800px;
     background-color: var(--surface-container-low);
 }
 
+/* Hold to delete button: transition */
 .holding {
   transition:
     background-color var(--hold-duration, 0.3s) ease-out,
     color var(--hold-duration, 0.3s) ease-out;
 }
 
-/* Flash Messages (Snackbars) */
+/* Flash Messages (Snackbars): imitates MD3 snackbars */
 #flash-messages {
     position: absolute;
     bottom: 4rem;
@@ -83,25 +77,30 @@ dialog {
     }
 }
 
+/* Fill space helper: Used for navigation tabs on dialogs */
 .fill-space {
   & > * {
     flex-grow: 1 !important;
   }
 }
 
+/* Semi-bold helper (+ default font-weight for buttons) */
 .semi-bold, .button, button, .chip {
     font-weight: 600;
 }
 
+/* Hidden helper */
 .hidden {
     visibility: hidden;
 }
 
+/* Chip: make the fill class follow MD3 guidelines */
 .chip.fill {
     background-color: var(--secondary-container) !important;
     color: var(--on-secondary-container) !important;
 }
 
+/* Bottom navigation: used for the dark-mode toggle button */
 .bottom-nav {
     flex: 1 !important;
     align-content: end;
@@ -111,3 +110,38 @@ dialog {
         transform: translate(-50%);
     }
 }
+
+/* Table rows: add hover effect */
+tbody tr:hover {
+    background: var(--surface-container);
+}
+
+/* Specific classes for the email button with custom loader */
+button {
+    .email-label {
+      transition: opacity .2s ease-in;
+    }
+  
+    .loading-indicator {
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity .2s ease-in;
+      pointer-events: none;
+    }
+  
+    &.htmx-request {
+      pointer-events: none; // disable clicks while pending
+  
+      .loading-indicator {
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
+      }
+  
+      .email-label {
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+      }
+    }
+  }

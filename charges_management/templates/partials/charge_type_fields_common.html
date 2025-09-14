@@ -4,3 +4,9 @@
          value="{{ charge.year if charge }}" required>
   <label for="year">Year</label>
 </div>
+
+<div class="field label prefix border">
+  <i>today</i>
+  <input type="date" id="voting_date" name="voting_date" value="{{ charge.voting_date.strftime('%Y-%m-%d') if charge and charge.voting_date else '' }}" required>
+  <label for="voting_date">Voting Date</label>
+</div>

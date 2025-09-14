@@ -1,3 +1,4 @@
+/* Body: Set font and theme */
 body {
   --font: "Nunito", sans-serif;
   font-optical-sizing: auto;
@@ -6,10 +7,7 @@ body.light {
   --surface-variant: #f2ecee !important;
 }
 
-form {
-  display: inline;
-}
-
+/* Navigation rail: <a> elements that are stretched to the width of the rail */
 nav.max.left {
   gap: 1rem;
 }
@@ -18,16 +16,18 @@ nav.max a {
   justify-content: flex-start;
 }
 
+/* Dialog: custom width and background color */
 dialog {
   width: 800px;
   background-color: var(--surface-container-low);
 }
 
+/* Hold to delete button: transition */
 .holding {
   transition: background-color var(--hold-duration, 0.3s) ease-out, color var(--hold-duration, 0.3s) ease-out;
 }
 
-/* Flash Messages (Snackbars) */
+/* Flash Messages (Snackbars): imitates MD3 snackbars */
 #flash-messages {
   position: absolute;
   bottom: 4rem;
@@ -70,23 +70,28 @@ dialog {
     transform: translateY(-100%);
   }
 }
+/* Fill space helper: Used for navigation tabs on dialogs */
 .fill-space > * {
   flex-grow: 1 !important;
 }
 
+/* Semi-bold helper (+ default font-weight for buttons) */
 .semi-bold, .button, button, .chip {
   font-weight: 600;
 }
 
+/* Hidden helper */
 .hidden {
   visibility: hidden;
 }
 
+/* Chip: make the fill class follow MD3 guidelines */
 .chip.fill {
   background-color: var(--secondary-container) !important;
   color: var(--on-secondary-container) !important;
 }
 
+/* Bottom navigation: used for the dark-mode toggle button */
 .bottom-nav {
   flex: 1 !important;
   align-content: end;
@@ -94,6 +99,35 @@ dialog {
 nav.max .bottom-nav {
   inset-inline-start: 50%;
   transform: translate(-50%);
+}
+
+/* Table rows: add hover effect */
+tbody tr:hover {
+  background: var(--surface-container);
+}
+
+/* Specific classes for the email button with custom loader */
+button .email-label {
+  transition: opacity 0.2s ease-in;
+}
+button .loading-indicator {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s ease-in;
+  pointer-events: none;
+}
+button.htmx-request {
+  pointer-events: none;
+}
+button.htmx-request .loading-indicator {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+button.htmx-request .email-label {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
 }
 
 /*# sourceMappingURL=style.css.map */

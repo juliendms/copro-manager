@@ -46,7 +46,7 @@ class Charge(db.Model):
     payment_schedule = db.Column(db.String(50), nullable=False, default='one_time') # 'one_time' or 'quarterly'
     year = db.Column(db.Integer, nullable=True) # Made nullable
     purpose = db.Column(db.String(200), nullable=True) # New field for extraordinary charges
-    voting_date = db.Column(Date, nullable=False)
+    voting_date = db.Column(Date, nullable=True)
     date_created = db.Column(db.DateTime, nullable=False, default=db.func.current_timestamp())
 
     repartitions = db.relationship('ChargeRepartition', back_populates='charge', cascade="all, delete-orphan")

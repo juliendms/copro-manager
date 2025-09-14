@@ -1,18 +1,5 @@
 {% extends "base.html" %}
 
-{% block head_content %}
-<style>
-    .chip.active {
-        background-color: var(--primary);
-        color: var(--on-primary);
-    }
-    .chip.active i {
-        color: var(--on-primary);
-    }
-</style>
-{% endblock %}
-
-
 {% block body_content %}
     <h4>{{ charge.description }}</h4>
     <div class="row">
@@ -24,7 +11,9 @@
             {% elif charge.type == 'extraordinary' %}
                 <p><strong>Purpose:</strong> {{ charge.purpose }}</p>
             {% endif %}
+            {% if charge.voting_date %}
             <p><strong>Voting Date:</strong> {{ charge.voting_date.strftime('%Y-%m-%d') }}</p>
+            {% endif %}
         </article>
     </div>
 

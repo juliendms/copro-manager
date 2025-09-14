@@ -6,13 +6,16 @@ from sqlalchemy.orm import joinedload
 
 from . import owner_bp as owner
 from models import db, Owner, OwnerEmail
+from app_utils import no_cache
 
 @owner.route('/')
+@no_cache
 def list_owners():
     owners = db.session.scalars(db.select(Owner).options(joinedload(Owner.emails))).unique().all()
     return render_template('owners.html', owners=owners)
 
 @owner.route('/fragments/table')
+@no_cache
 def table_fragment():
     owners = db.session.scalars(db.select(Owner).options(joinedload(Owner.emails))).unique().all()
     return render_template('partials/owners_table.html', owners=owners)
@@ -172,5 +175,5 @@ def init_owner_data():
                 flash(f"  Email {email_address} already exists, skipping for {name}.", 'warning')
         
         db.session.commit()
-        flash("Owner data initialization complete.", 'success')
+    flash("Owner data initialization complete.", 'success')
     return redirect(url_for('owner.list_owners'))

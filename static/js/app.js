@@ -99,6 +99,7 @@ document.addEventListener('invalid', (function () {
     }
   });
 
+  // Dark theme toggle
   const themeToggleIcons = '#theme-toggle > i';
 
   function setThemeIcon(mode) {

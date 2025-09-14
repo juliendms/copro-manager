@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ installment.charge_repartition.charge.description }}{{ ' - Trimestre ' + installment.quarter|string if installment.quarter else '' }}</title>
+    <title>{{ subject }}</title>
     <style>
         body {
             font-family: 'Roboto', sans-serif;
@@ -46,7 +46,7 @@
 <body>
     <div class="container">
         <div class="header">
-            <h3>{{ installment.charge_repartition.charge.description }}{{ ' - Trimestre ' + installment.quarter|string if installment.quarter }}</h3>
+            <h3>{{ subject }}</h3>
         </div>
         <div class="content">
             <p>Bonjour,</p>
@@ -58,7 +58,13 @@
                 <li><strong>Montant restant dû pour la période: {{ "%.2f"|format(installment.amount) }} EUR</strong></li>
             </ul>
             {% elif installment.charge_repartition.charge.type == 'extraordinary' %}
-            <p>Je vous informe que votre participation aux travaux de <strong>{{ installment.charge_repartition.charge.purpose }}</strong> s'élève à <strong>{{ "%.2f"|format(installment.amount) }} EUR</strong>. Pour rappel, le devis validé lors de l'assemblée générale du <strong>{{ installment.charge_repartition.charge.voting_date.strftime('%Y-%m-%d') }}</strong> s'élève à un total de <strong>{{ "%.2f"|format(installment.charge_repartition.charge.total_amount) }} EUR</strong>.</p>
+            <p>Je vous informe que votre participation aux travaux de <strong>{{ installment.charge_repartition.charge.purpose }}</strong> s'élève à <strong>{{ "%.2f"|format(installment.amount) }} EUR</strong>. 
+                {% if installment.charge_repartition.charge.voting_date %}
+                Pour rappel, le devis validé lors de l'assemblée générale du <strong>{{ installment.charge_repartition.charge.voting_date.strftime('%Y-%m-%d') }}</strong> s'élève à un total de <strong>{{ "%.2f"|format(installment.charge_repartition.charge.total_amount) }} EUR</strong>.
+                {% else %}
+                Le devis validé par la copropriété s'élève à un total de <strong>{{ "%.2f"|format(installment.charge_repartition.charge.total_amount) }} EUR</strong>.
+                {% endif %}
+            </p>
             <ul class="highlight">
                 <li><strong>Lot(s) :</strong> {{ installment.charge_repartition.owner.lot_number }}</li>
                 <li><strong>Tantième :</strong> {{ installment.charge_repartition.owner.share }}</li>

@@ -6,6 +6,7 @@ from charges_management.utils import get_services, get_account_info, send_messag
 from google.auth.exceptions import RefreshError
 
 from . import charges_bp
+from app_utils import no_cache
 
 
 @charges_bp.route('/')
@@ -15,12 +16,10 @@ def list_charges():
     return render_template('charges.html', charges=charges)
 
 @charges_bp.route('/fragments/table')
+@no_cache
 def table_fragment():
     charges = Charge.query.all()
     resp = make_response(render_template('partials/charges_table.html', charges=charges))
-    resp.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate, max-age=0'
-    resp.headers['Pragma'] = 'no-cache'
-    resp.headers['Expires'] = '0'
     return resp
 
 @charges_bp.route('/fragments/dialog')
@@ -67,8 +66,12 @@ def add_charge():
     description = request.form['description']
     total_amount = float(request.form['total_amount'])
     charge_type = request.form['charge_type']
-    voting_date_str = request.form['voting_date']
-    voting_date = datetime.strptime(voting_date_str, '%Y-%m-%d').date()
+
+    voting_date = None
+    if request.form.get('voting_date'):
+        voting_date_str = request.form['voting_date']
+        voting_date = datetime.strptime(voting_date_str, '%Y-%m-%d').date()
+
     source = request.form.get('source', 'charges_page')
 
     payment_schedule = 'quarterly' if charge_type == 'common' else 'one_time'
@@ -150,7 +153,12 @@ def edit_charge(charge_id):
 
         charge.description = request.form['description']
         charge.total_amount = float(request.form['total_amount'])
-        charge.voting_date = datetime.strptime(request.form['voting_date'], '%Y-%m-%d').date()
+        
+        # Handle voting_date conditionally
+        if request.form.get('voting_date'):
+            charge.voting_date = datetime.strptime(request.form['voting_date'], '%Y-%m-%d').date()
+        else:
+            charge.voting_date = None
 
         # Lock charge type if repartitions exist
         if charge.repartitions:
@@ -255,6 +263,7 @@ def delete_charge(charge_id):
     return redirect(url_for('charges.list_charges'))
 
 @charges_bp.route('/<int:charge_id>/repartition')
+@no_cache
 def view_repartition(charge_id):
     selected_quarter = request.args.get('quarter', type=int)
 
@@ -354,10 +363,15 @@ def send_repartition_email(installment_id):
         ).all()
         yearly_amount = sum(inst.amount for inst in all_owner_installments)
 
+        subject_prefix = "Rappel - " if installment.email_sent_date else ""
+        subject_suffix = " - Trimestre " + str(installment.quarter) if installment.quarter else ""
+        subject = f"{subject_prefix}{charge.description}{subject_suffix}"
+
         # Prepare context for the unified template
         context = {
             'installment': installment,
-            'yearly_amount': yearly_amount
+            'yearly_amount': yearly_amount,
+            'subject': subject
         }
 
         html = render_template('email_charges.html', **context)
@@ -371,7 +385,6 @@ def send_repartition_email(installment_id):
             creds, gmail, oauth2 = get_services()
             account_email, account_name = get_account_info(oauth2)
 
-            subject = f"{charge.description}{' - Trimestre ' + str(installment.quarter) if installment.quarter else ''}"
             send_message(gmail, recipients, subject, html, account_email, account_name)
             
             installment.email_sent_date = datetime.now(timezone.utc)

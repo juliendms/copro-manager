@@ -16,11 +16,7 @@
     <label for="total_amount">Total Amount</label>
   </div>
 
-  <div class="field label prefix border">
-    <i>today</i>
-    <input type="date" id="voting_date" name="voting_date" value="{{ charge.voting_date.strftime('%Y-%m-%d') if charge and charge.voting_date else '' }}" required>
-    <label for="voting_date">Voting Date</label>
-  </div>
+  {# Voting date is now handled by the partials for common/extraordinary charges #}
 
   {% include 'partials/_charge_type_selector.html' %}
 {% endcall %}
