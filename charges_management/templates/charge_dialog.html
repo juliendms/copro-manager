@@ -3,6 +3,7 @@
 
 {%- set is_common = (charge is none) or (charge.type == 'common') -%}
 {% call dialog(title, action_url, method='POST', form_hx_post=action_url, form_hx_target='#charges-table', form_hx_swap='innerHTML') %}
+  <input type="hidden" name="source" value="{{ source or 'charges_page' }}">
   <div class="field label border">
     <input type="text" id="description" name="description"
            value="{{ charge.description if charge else '' }}" required>

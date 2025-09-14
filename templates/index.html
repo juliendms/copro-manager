@@ -1,7 +1,65 @@
 {% extends "base.html" %}
 
-{% block title %}Home{% endblock %}
+{% block title %}Dashboard{% endblock %}
 
 {% block body_content %}
-    <h1>Welcome to the Homeowner Association Manager</h1>
+    <button class="extend circle right-round top-round no-margin"
+       data-ui="dialog"
+       hx-get="{{ url_for('charges.dialog_fragment') }}?mode=add&source=dashboard"
+       hx-target="#dialog"
+       hx-swap="innerHTML">
+        <i>assignment_add</i>
+        <span>Add a charge</span>
+    </button>
+
+    {% if dashboard_charges %}
+        <div class="grid">
+            {% for item in dashboard_charges %}
+                <div class="s12">
+                    <article>
+                        <div class="max">
+                            <h5>{{ item.charge.description }}</h5>
+                            {% if item.charge.type == 'common' %}
+                                <div class="secondary-text">Common charge for {{ item.charge.year }} - Quarter {{ item.quarter }}</div>
+                            {% else %}
+                                <div class="secondary-text">Extraordinary charge</div>
+                            {% endif %}
+                        </div>
+                        <div class="table-container top-margin">
+                            <table class="border">
+                                <thead>
+                                    <tr>
+                                        <th>Owner</th>
+                                        <th>Emails</th>
+                                        <th>Status</th>
+                                        <th>Lot</th>
+                                        <th class="right-align">Share</th>
+                                        <th class="right-align right-padding">Amount</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for installment in item.installments %}
+                                        {% include 'partials/_repartition_row.html' %}
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        <nav class="right-align">
+                            <a  href="{{ url_for('charges.view_repartition', charge_id=item.charge.id) }}"
+                                class="button transparent primary-text">
+                                    More details
+                            </a>
+                        </nav>
+                    </article>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="row center-align middle-align">
+            <div class="s12">
+                <h5>No ongoing charges.</h5>
+            </div>
+        </div>
+    {% endif %}
 {% endblock %}

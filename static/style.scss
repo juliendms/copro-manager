@@ -5,9 +5,12 @@
 // $border-light: #ddd;
 
 body {
-    --surface-variant: #f2ecee !important;
     --font: "Nunito", sans-serif;
     font-optical-sizing: auto;
+
+    &.light {
+        --surface-variant: #f2ecee !important;
+    }
 }
 
 form {
@@ -86,10 +89,25 @@ dialog {
   }
 }
 
-.semi-bold {
+.semi-bold, .button, button, .chip {
     font-weight: 600;
 }
 
 .hidden {
     visibility: hidden;
+}
+
+.chip.fill {
+    background-color: var(--secondary-container) !important;
+    color: var(--on-secondary-container) !important;
+}
+
+.bottom-nav {
+    flex: 1 !important;
+    align-content: end;
+    
+    nav.max & {
+        inset-inline-start: 50%;
+        transform: translate(-50%);
+    }
 }

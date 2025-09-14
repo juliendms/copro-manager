@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ installment.charge_repartition.charge.description }}{{ ' - Trimestre ' + installment.quarter|string if installment.quarter else '' }}</title>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f7f2f7;
+            color: #222;
+            margin: 0;
+            padding: 0;
+            line-height: 1.3;
+            font-size: 16px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 16px auto;
+            background-color: #Fdf8fd;
+            box-shadow: 0 .125rem .125rem 0 rgb(0 0 0 / .32);
+            padding: 32px;
+            border: 1px solid #D7CCC8; /* Pierre dorée */
+            border-radius: 4px;
+        }
+        .header, .footer {
+            color: #ba5822; /* Brun foncé */
+            background-color: #faf1e2; /* Beige léger */
+            padding: 1rem;
+            text-align: center;
+            border-radius: 4px;
+        }
+        .content {
+            padding: 1rem 0;
+        }
+        .content strong {
+            color: #ba5822; /* Orange brûlé */
+        }
+        .highlight {
+            padding: 0.5rem 2rem;
+            border-left: 3px solid #f2dcb6;
+            margin: 1rem 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h3>{{ installment.charge_repartition.charge.description }}{{ ' - Trimestre ' + installment.quarter|string if installment.quarter }}</h3>
+        </div>
+        <div class="content">
+            <p>Bonjour,</p>
+            {% if installment.charge_repartition.charge.type == 'common' %}
+            <p>Je vous informe que votre provision de charges pour l'année <strong>{{ installment.charge_repartition.charge.year }}</strong> s'élève à <strong>{{ "%.2f"|format(yearly_amount) }} EUR</strong>, conformément au budget prévisionnel de la copropriété établi à <strong>{{ "%.2f"|format(installment.charge_repartition.charge.total_amount) }} EUR</strong>, voté lors de l'assemblée générale du <strong>{{ installment.charge_repartition.charge.voting_date.strftime('%Y-%m-%d') }}</strong>.</p>
+            <ul class="highlight">
+                <li><strong>Lot(s) :</strong> {{ installment.charge_repartition.owner.lot_number }}</li>
+                <li><strong>Tantième :</strong> {{ installment.charge_repartition.owner.share }}</li>
+                <li><strong>Montant restant dû pour la période: {{ "%.2f"|format(installment.amount) }} EUR</strong></li>
+            </ul>
+            {% elif installment.charge_repartition.charge.type == 'extraordinary' %}
+            <p>Je vous informe que votre participation aux travaux de <strong>{{ installment.charge_repartition.charge.purpose }}</strong> s'élève à <strong>{{ "%.2f"|format(installment.amount) }} EUR</strong>. Pour rappel, le devis validé lors de l'assemblée générale du <strong>{{ installment.charge_repartition.charge.voting_date.strftime('%Y-%m-%d') }}</strong> s'élève à un total de <strong>{{ "%.2f"|format(installment.charge_repartition.charge.total_amount) }} EUR</strong>.</p>
+            <ul class="highlight">
+                <li><strong>Lot(s) :</strong> {{ installment.charge_repartition.owner.lot_number }}</li>
+                <li><strong>Tantième :</strong> {{ installment.charge_repartition.owner.share }}</li>
+                <li><strong>Quote-part: {{ "%.2f"|format(installment.amount) }} EUR</strong></li>
+            </ul>
+            {% endif %}
+            <p>Je vous prie de régler cette somme dans un délai de 30 jours, selon les modalités habituelles de paiement.</p>
+            <p>Je reste à votre disposition pour toute question éventuelle.</p>
+            <p>Cordialement,</p>
+        </div>
+        <div class="footer">
+            <p>Copropriété Syndic Bénévole de la Creuse</p>
+        </div>
+    </div>
+</body>
+</html>

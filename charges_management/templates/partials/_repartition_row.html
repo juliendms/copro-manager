@@ -26,7 +26,7 @@
         <nav class="group">
             {% if installment.charge_repartition.owner.emails and installment.status != 'Paid' %}
                 <button hx-post="{{ url_for('charges.send_repartition_email', installment_id=installment.id) }}" 
-                        class="small circle fill"
+                        class="small circle {{ 'fill' if installment.status == 'Draft' else 'border' }}"
                         hx-target="#repartition-row-{{ installment.id }}"
                         hx-swap="outerHTML">
                     <i>email</i>
@@ -34,7 +34,9 @@
             {% endif %}
 
             <button hx-post="{{ url_for('charges.mark_as_paid', installment_id=installment.id) }}" 
-                    class="small circle fill {{ 'hidden' if installment.status == 'Paid' else '' }}"
+                    class="small circle {{ 'hidden' if installment.status == 'Paid'
+                                            else 'border' if installment.status == 'Draft'
+                                            else 'fill' }}"
                     hx-target="#repartition-row-{{ installment.id }}"
                     hx-swap="outerHTML">
                 <i>attach_money</i>

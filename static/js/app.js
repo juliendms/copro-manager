@@ -98,3 +98,28 @@ document.addEventListener('invalid', (function () {
       }
     }
   });
+
+  const themeToggleIcons = '#theme-toggle > i';
+
+  function setThemeIcon(mode) {
+      const icon = mode === 'dark' ? 'light_mode' : 'dark_mode';
+      document.querySelectorAll(themeToggleIcons).forEach(el => {
+          if (el) el.textContent = icon;
+      });
+  }
+  
+  function toggleTheme() {
+      const newMode = ui('mode') === 'dark' ? 'light' : 'dark';
+      ui('mode', newMode);
+      setThemeIcon(newMode);
+      localStorage.setItem('theme', newMode);
+  }
+  
+  document.addEventListener('DOMContentLoaded', () => {
+      // Check for saved theme preference
+      const savedTheme = localStorage.getItem('theme');
+      if (savedTheme && savedTheme !== ui('mode')) {
+          ui('mode', savedTheme);
+      }
+      setThemeIcon(ui('mode'));
+  });

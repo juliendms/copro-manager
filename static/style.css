@@ -1,7 +1,9 @@
 body {
-  --surface-variant: #f2ecee !important;
   --font: "Nunito", sans-serif;
   font-optical-sizing: auto;
+}
+body.light {
+  --surface-variant: #f2ecee !important;
 }
 
 form {
@@ -72,12 +74,26 @@ dialog {
   flex-grow: 1 !important;
 }
 
-.semi-bold {
+.semi-bold, .button, button, .chip {
   font-weight: 600;
 }
 
 .hidden {
   visibility: hidden;
+}
+
+.chip.fill {
+  background-color: var(--secondary-container) !important;
+  color: var(--on-secondary-container) !important;
+}
+
+.bottom-nav {
+  flex: 1 !important;
+  align-content: end;
+}
+nav.max .bottom-nav {
+  inset-inline-start: 50%;
+  transform: translate(-50%);
 }
 
 /*# sourceMappingURL=style.css.map */

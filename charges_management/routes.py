@@ -1,6 +1,6 @@
 from flask import render_template, request, redirect, url_for, flash, abort, Blueprint, current_app, make_response
 from models import db, Charge, Owner, OwnerEmail, ChargeRepartition, PaymentInstallment
-from datetime import datetime
+from datetime import datetime, timezone
 from sqlalchemy.orm import joinedload, subqueryload
 from charges_management.utils import get_services, get_account_info, send_message, render_owner
 from google.auth.exceptions import RefreshError
@@ -26,6 +26,7 @@ def table_fragment():
 @charges_bp.route('/fragments/dialog')
 def dialog_fragment():
     mode = request.args.get('mode', 'add')
+    source = request.args.get('source', 'charges_page')
     charge = None
     action_url = url_for('charges.add_charge')
     title = 'Add a charge'
@@ -46,7 +47,8 @@ def dialog_fragment():
                            action_url=action_url,
                            charge=charge,
                            is_common=is_common,
-                           owners=owners)
+                           owners=owners,
+                           source=source)
 
 @charges_bp.route('/fragments/type_fields')
 def type_fields():
@@ -67,6 +69,7 @@ def add_charge():
     charge_type = request.form['charge_type']
     voting_date_str = request.form['voting_date']
     voting_date = datetime.strptime(voting_date_str, '%Y-%m-%d').date()
+    source = request.form.get('source', 'charges_page')
 
     payment_schedule = 'quarterly' if charge_type == 'common' else 'one_time'
 
@@ -122,6 +125,13 @@ def add_charge():
 
         db.session.commit()
         flash('Charge added successfully!', 'success')
+
+        if source == 'dashboard':
+            response = make_response()
+            response.headers['HX-Redirect'] = url_for('charges.view_repartition', charge_id=new_charge.id)
+            response.headers['HX-Trigger'] = 'flash-refresh,closeDialog'
+            return response
+
         if request.headers.get('HX-Request'):
             response = make_response(render_template('partials/charges_table.html', charges=Charge.query.all()))
             response.headers['HX-Trigger'] = 'flash-refresh,charge-changed,closeDialog'
@@ -331,7 +341,9 @@ def quarter_nav_fragment(charge_id):
 @charges_bp.route('/repartition/installment/<int:installment_id>/send_email', methods=['POST'])
 def send_repartition_email(installment_id):
     with current_app.app_context():
-        installment = PaymentInstallment.query.get_or_404(installment_id)
+        installment = PaymentInstallment.query.options(
+            joinedload(PaymentInstallment.charge_repartition).joinedload(ChargeRepartition.charge)
+        ).get_or_404(installment_id)
         charge = installment.charge_repartition.charge
         owner = installment.charge_repartition.owner
 
@@ -342,27 +354,13 @@ def send_repartition_email(installment_id):
         ).all()
         yearly_amount = sum(inst.amount for inst in all_owner_installments)
 
+        # Prepare context for the unified template
         context = {
-            'title': f"{charge.description}{' - Trimestre ' + str(installment.quarter) if installment.quarter else ''}",
-            'name': owner.name,
-            'lot': owner.lot_number,
-            'share': str(owner.share),
-            'amount_due': "%.2f" % installment.amount,
-            'description': charge.description,
-            'total_budget': "%.2f" % charge.total_amount,
-            'voting_date': charge.voting_date.strftime('%Y-%m-%d'),
-            'yearly_amount': "%.2f" % yearly_amount
+            'installment': installment,
+            'yearly_amount': yearly_amount
         }
 
-        email_template = ''
-        if charge.type == 'common':
-            context['year'] = charge.year
-            email_template = 'email_common_charges.html'
-        elif charge.type == 'extraordinary':
-            context['purpose'] = charge.purpose
-            email_template = 'email_extraordinary_charges.html'
-
-        html = render_template(email_template, **context)
+        html = render_template('email_charges.html', **context)
         recipients = [email_obj.email for email_obj in owner.emails]
         if not recipients:
             flash(f"No email addresses found for {owner.name}.", 'danger')
@@ -373,10 +371,10 @@ def send_repartition_email(installment_id):
             creds, gmail, oauth2 = get_services()
             account_email, account_name = get_account_info(oauth2)
 
-            subject = context['title']
+            subject = f"{charge.description}{' - Trimestre ' + str(installment.quarter) if installment.quarter else ''}"
             send_message(gmail, recipients, subject, html, account_email, account_name)
             
-            installment.email_sent_date = datetime.utcnow()
+            installment.email_sent_date = datetime.now(timezone.utc)
             db.session.commit()
             
             flash(f"Email sent to {owner.name} successfully!", 'success')
@@ -402,7 +400,7 @@ def mark_as_paid(installment_id):
     with current_app.app_context():
         installment = PaymentInstallment.query.get_or_404(installment_id)
         
-        installment.paid_date = datetime.utcnow()
+        installment.paid_date = datetime.now(timezone.utc)
         db.session.commit()
 
         charge = installment.charge_repartition.charge

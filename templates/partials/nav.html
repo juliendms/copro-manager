@@ -1,0 +1,17 @@
+<a class="auto-width {% if request.endpoint == 'index' %}active{% endif %}" href="{{ url_for('index') }}">
+    <i>home</i>
+    <div>Overview</div>
+</a>
+<a class="{% if request.endpoint.startswith('owner.') %}active{% endif %}" href="{{ url_for('owner.list_owners') }}">
+    <i>group</i>
+    <div>Owners</div>
+</a>
+<a class="{% if request.endpoint.startswith('charges.') %}active{% endif %}" href="{{ url_for('charges.list_charges') }}">
+    <i>construction</i>
+    <div>Charges</div>
+</a>
+<div class="bottom-nav">
+    <button id="theme-toggle" class="circle border large bottom-margin" onclick="toggleTheme()">
+        <i>dark_mode</i>
+    </button>
+</div>
