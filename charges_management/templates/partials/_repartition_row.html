@@ -1,6 +1,6 @@
 <tr id="repartition-row-{{ installment.id }}">
     <td>{{ installment.charge_repartition.owner.name }}</td>
-    <td>
+    <td class="l m">
         {% if installment.charge_repartition.owner.emails %}
             {{ installment.charge_repartition.owner.emails | map(attribute='email') | join(', ') }}
         {% else %}
@@ -18,9 +18,18 @@
             <div class="badge none min {{ style.class }}"></div>
             <span class="{{ style.class }}-text semi-bold">{{ style.text }}</span>
         </div>
+        {% if installment.status == 'Paid' %}
+            <div class="tooltip top no-space">
+                Paid on {{ installment.paid_date.strftime('%Y-%m-%d %H:%M') }}
+            </div>
+        {% elif installment.status == 'Sent' %}
+            <div class="tooltip top no-space">
+                Sent on {{ installment.email_sent_date.strftime('%Y-%m-%d %H:%M') }}
+            </div>
+        {% endif %}
     </td>
-    <td>{{ installment.charge_repartition.owner.lot_number }}</td>
-    <td class="right-align">{{ installment.charge_repartition.owner.share }}</td>
+    <td class="l">{{ installment.charge_repartition.owner.lot_number }}</td>
+    <td class="l right-align">{{ installment.charge_repartition.owner.share }}</td>
     <td class="right-align right-padding">{{ "%.2f" | format(installment.amount) }}</td>
     <td class="left-padding" style="width: 1%">
         <nav class="group">

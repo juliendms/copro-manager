@@ -3,16 +3,16 @@
 {% block title %}Dashboard{% endblock %}
 
 {% block body_content %}
-    <button class="extend circle right-round top-round no-margin"
-       data-ui="dialog"
-       hx-get="{{ url_for('charges.dialog_fragment') }}?mode=add&source=dashboard"
-       hx-target="#dialog"
-       hx-swap="innerHTML">
-        <i>assignment_add</i>
-        <span>Add a charge</span>
-    </button>
-
     {% if dashboard_charges %}
+        <button class="extend circle right-round top-round no-margin"
+                data-ui="dialog"
+                hx-get="{{ url_for('charges.dialog_fragment') }}?mode=add&source=dashboard"
+                hx-target="#dialog"
+                hx-swap="innerHTML">
+            <i>assignment_add</i>
+            <span>Add a charge</span>
+        </button>
+
         <div class="grid">
             {% for item in dashboard_charges %}
                 <div class="s12">
@@ -30,10 +30,10 @@
                                 <thead>
                                     <tr>
                                         <th>Owner</th>
-                                        <th>Emails</th>
+                                        <th class="l m">Emails</th>
                                         <th>Status</th>
-                                        <th>Lot</th>
-                                        <th class="right-align">Share</th>
+                                        <th class="l">Lot</th>
+                                        <th class="l right-align">Share</th>
                                         <th class="right-align right-padding">Amount</th>
                                         <th class="left-padding">Actions</th>
                                     </tr>
@@ -56,10 +56,26 @@
             {% endfor %}
         </div>
     {% else %}
-        <div class="row center-align middle-align">
-            <div class="s12">
-                <h5>No ongoing charges.</h5>
-            </div>
+      <article class="middle medium middle-align center-align">
+        <div>
+          <i class="extra">assignment_turned_in</i>
+          <h5>No ongoing charges</h5>
+          <p>Either all charges are paid or new, or there is no charge.</p>
+          <div class="space"></div>
+          <nav class="center-align">
+            <button data-ui="dialog"
+                    hx-get="{{ url_for('charges.dialog_fragment') }}?mode=add&source=dashboard"
+                    hx-target="#dialog"
+                    hx-swap="innerHTML">
+              <i>assignment_add</i>
+              <span>Add a charge</span>
+            </button>
+            <a  href="{{ url_for('charges.list_charges') }}" class="button primary">
+                <i>construction</i>
+                <span>To the list of charges</span>
+            </a>
+          </nav>
         </div>
+      </article>
     {% endif %}
 {% endblock %}

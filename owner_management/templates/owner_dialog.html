@@ -1,6 +1,7 @@
 {% from "dialog.html" import dialog %}
 
-{% call dialog(title, action_url, method='POST', form_hx_post=action_url, form_hx_target='#owners-table', form_hx_swap='innerHTML') %}
+<!-- refactor dialog here to not target #table when creating from the empty state -->
+{% call dialog(title, action_url, method='POST', form_hx_post=action_url, form_hx_target=form_hx_target, form_hx_swap=form_hx_swap) %}
   <div class="field label border">
     <input type="text" id="name" name="name" value="{{ owner.name if owner else '' }}" required>
     <label for="name">Name</label>

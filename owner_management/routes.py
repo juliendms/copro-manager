@@ -1,3 +1,4 @@
+from logging import debug
 from flask import render_template, request, redirect, url_for, flash, Blueprint, make_response
 import json
 import os
@@ -8,11 +9,13 @@ from . import owner_bp as owner
 from models import db, Owner, OwnerEmail
 from app_utils import no_cache
 
+
 @owner.route('/')
 @no_cache
 def list_owners():
     owners = db.session.scalars(db.select(Owner).options(joinedload(Owner.emails))).unique().all()
-    return render_template('owners.html', owners=owners)
+    has_owners = len(owners) > 0
+    return render_template('owners.html', owners=owners, has_owners=has_owners)
 
 @owner.route('/fragments/table')
 @no_cache
@@ -26,13 +29,14 @@ def dialog_fragment():
     owner = None
     action_url = url_for('owner.add_owner')
     title = 'Add an owner'
+    form_hx_target = request.args.get('form_hx_target', '#owners-table') # Get hx_target_for_form
     if mode == 'edit':
         owner_id = request.args.get('owner_id', type=int)
         if owner_id:
             owner = Owner.query.get_or_404(owner_id)
             action_url = url_for('owner.edit_owner', owner_id=owner.id)
             title = 'Edit owner'
-    return render_template('owner_dialog.html', title=title, action_url=action_url, owner=owner)
+    return render_template('owner_dialog.html', title=title, action_url=action_url, owner=owner, form_hx_target=form_hx_target, form_hx_swap='innerHTML') # Pass form_hx_target and form_hx_swap
 
 @owner.route('/add', methods=['POST'])
 def add_owner():
@@ -40,6 +44,7 @@ def add_owner():
     lot_number = request.form['lot_number']
     share = int(request.form['share'])
     emails_str = request.form['emails']
+    form_hx_target = request.headers.get('HX-Target', '#owners-table') # Get HX-Target from headers if not explicitly passed
 
     existing_owner = Owner.query.filter_by(lot_number=lot_number).first()
     if existing_owner:
@@ -67,7 +72,14 @@ def add_owner():
     flash('Owner added successfully!', 'success')
     if request.headers.get('HX-Request'):
         owners = db.session.scalars(db.select(Owner).options(joinedload(Owner.emails))).unique().all()
-        response = make_response(render_template('partials/owners_table.html', owners=owners))
+        
+        # Determine what to render based on form_hx_target
+        if form_hx_target == 'content': # Check for the main#content target without the hash
+            response_content = render_template('partials/owners_main_content.html', owners=owners)
+        else: # Default to owners-table
+            response_content = render_template('partials/owners_table.html', owners=owners)
+
+        response = make_response(response_content)
         response.headers['HX-Trigger'] = 'flash-refresh,owner-changed,closeDialog'
         return response
     return redirect(url_for('owner.list_owners'))
@@ -115,7 +127,7 @@ def edit_owner(owner_id):
         return response
     return redirect(url_for('owner.list_owners'))
 
-@owner.route('/delete/<int:owner_id>', methods=['POST'])
+@owner.route('/delete/<int:owner_id>', methods=['DELETE'])
 def delete_owner(owner_id):
     owner = Owner.query.get_or_404(owner_id)
     db.session.delete(owner)
@@ -123,28 +135,30 @@ def delete_owner(owner_id):
     flash('Owner deleted successfully!', 'success')
     if request.headers.get('HX-Request'):
         owners = db.session.scalars(db.select(Owner).options(joinedload(Owner.emails))).unique().all()
+        has_owners = len(owners) > 0
         response = make_response(render_template('partials/owners_table.html', owners=owners))
         response.headers['HX-Trigger'] = 'flash-refresh,owner-changed'
+        if not has_owners:
+            response.headers['HX-Refresh'] = 'true'
         return response
     return redirect(url_for('owner.list_owners'))
 
-@owner.route('/init_data')
+@owner.route('/init_data', methods=['GET', 'POST'])
 def init_owner_data():
-    # Only allow initialization if no owners exist, or with a confirmation
-    if Owner.query.first():
-        flash("Owners already exist in the database. Skipping initialization.", 'info')
-        return redirect(url_for('owner.list_owners'))
-
     json_file_path = os.path.join(owner.root_path, 'data', 'initial_owners.json')
     try:
         with open(json_file_path, 'r') as f:
             owner_data = json.load(f)
     except FileNotFoundError:
         flash("initial_owners.json not found in owner_management/data/", 'danger')
-        return redirect(url_for('owner.list_owners'))
+        response = make_response('') # Empty response with trigger for flash message
+        response.headers['HX-Trigger'] = 'flash-refresh'
+        return response
     except json.JSONDecodeError:
         flash("Error decoding initial_owners.json. Check file format.", 'danger')
-        return redirect(url_for('owner.list_owners'))
+        response = make_response('') # Empty response with trigger for flash message
+        response.headers['HX-Trigger'] = 'flash-refresh'
+        return response
 
     for data in owner_data:
         name = data["name"]
@@ -176,4 +190,10 @@ def init_owner_data():
         
         db.session.commit()
     flash("Owner data initialization complete.", 'success')
-    return redirect(url_for('owner.list_owners'))
+    
+    # Render the updated main content partial
+    owners = db.session.scalars(db.select(Owner).options(joinedload(Owner.emails))).unique().all()
+    response = make_response(render_template('partials/owners_main_content.html', owners=owners, has_owners=len(owners) > 0))
+    response.headers['HX-Trigger'] = 'flash-refresh,owner-changed'
+    # response.headers['HX-Refresh'] = 'true' # Remove hard refresh
+    return response

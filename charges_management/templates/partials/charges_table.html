@@ -2,10 +2,10 @@
   <thead>
     <tr>
       <th>Description</th>
-      <th>Type</th>
+      <th class="l m">Type</th>
       <th class="l">Details</th>
       <th>Status</th>
-      <th class="right-align right-padding">Total Amount</th>
+      <th class="l m right-align right-padding">Total Amount</th>
       <th class="left-padding">Actions</th>
     </tr>
   </thead>
@@ -13,7 +13,7 @@
     {% for charge in charges %}
       <tr>
         <td>{{ charge.description }}</td>
-        <td>{{ charge.type.capitalize() }}</td>
+        <td class="l m">{{ charge.type.capitalize() }}</td>
         <td class="l">
           {% if charge.type == 'common' %}
             Year: {{ charge.year }}
@@ -33,7 +33,7 @@
             <span class="{{ style.class }}-text semi-bold">{{ style.text }}</span>
           </div>
         </td>
-        <td class="right-align right-padding">{{ "%.2f" | format(charge.total_amount) }}</td>
+        <td class="l m right-align right-padding">{{ "%.2f" | format(charge.total_amount) }}</td>
         <td class="left-padding" style="width: 1%">
           <nav class="group">
             <a href="{{ url_for('charges.view_repartition', charge_id=charge.id) }}"

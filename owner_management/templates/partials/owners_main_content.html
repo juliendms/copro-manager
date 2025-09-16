@@ -1,0 +1,16 @@
+<button class="extend circle right-round top-round no-margin"
+    data-ui="dialog"
+    hx-get="{{ url_for('owner.dialog_fragment') }}?mode=add&form_hx_target={{ '#owners-table' | urlencode }}"
+    hx-target="#dialog"
+    hx-swap="innerHTML">
+        <i>person_add</i>
+        <span>Add an owner</span>
+</button>
+
+<div    id="owners-table"
+        class="top-margin"
+        hx-get="{{ url_for('owner.table_fragment') }}"
+        hx-trigger="load"
+        hx-swap="innerHTML">
+    <!-- table loads here via HTMX -->
+</div>

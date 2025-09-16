@@ -12,8 +12,9 @@ from app_utils import no_cache
 @charges_bp.route('/')
 def list_charges():
     with current_app.app_context():
-        charges = Charge.query.all()
-    return render_template('charges.html', charges=charges)
+       charges = Charge.query.all()
+    has_charges = len(charges) > 0 
+    return render_template('charges.html', charges=charges, has_charges=has_charges)
 
 @charges_bp.route('/fragments/table')
 @no_cache
@@ -257,8 +258,12 @@ def delete_charge(charge_id):
         db.session.commit()
         flash('Charge deleted successfully!', 'success')
         if request.headers.get('HX-Request'):
-            response = make_response(render_template('partials/charges_table.html', charges=Charge.query.all()))
+            charges = Charge.query.all()
+            has_charges = len(charges) > 0 
+            response = make_response(render_template('partials/charges_table.html', charges=charges))
             response.headers['HX-Trigger'] = 'flash-refresh,charge-changed'
+            if not has_charges:
+                response.headers['HX-Refresh'] = 'true'
             return response
     return redirect(url_for('charges.list_charges'))
 

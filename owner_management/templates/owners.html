@@ -4,21 +4,28 @@
 {% block title %}Owners List{% endblock %}
 
 {% block body_content %}
-    <button class="extend circle right-round top-round no-margin"
-        data-ui="dialog"
-        hx-get="{{ url_for('owner.dialog_fragment') }}?mode=add"
-        hx-target="#dialog"
-        hx-swap="innerHTML">
+  {% if has_owners %}
+    {% include 'partials/owners_main_content.html' %}
+  {% else %}
+    <article class="middle medium middle-align center-align">
+      <div>
+        <i class="extra">group_off</i>
+        <h5>No owners found</h5>
+        <p>Either create a new owner or use the predefined list of owners</p>
+        <div class="space"></div>
+        <nav class="center-align">
+          <button class="border" data-ui="dialog"
+            hx-get="{{ url_for('owner.dialog_fragment') }}?mode=add&form_hx_target={{ '#content' | urlencode }}"
+            hx-target="#dialog" hx-swap="innerHTML">
             <i>person_add</i>
             <span>Add an owner</span>
-    </button>
-
-    <div    id="owners-table"
-            class="top-margin"
-            hx-get="{{ url_for('owner.table_fragment') }}"
-            hx-trigger="load"
-            hx-swap="innerHTML">
-        <!-- table loads here via HTMX -->
-    </div>
-
+          </button>
+          <button hx-post="{{ url_for('owner.init_owner_data') }}" hx-trigger="click" hx-swap="innerHTML" hx-target="#content">
+            <i>upload</i>
+            <span>Initialize predefined owners</span>
+          </button>
+        </nav>
+      </div>
+    </article>
+  {% endif %}
 {% endblock %}

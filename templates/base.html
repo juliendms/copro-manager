@@ -12,19 +12,49 @@
     {% block head_content %}{% endblock %}
 </head>
 <body>
+    {% if db_exists %}
     <nav class="left max surface-variant l">
         {% include 'partials/nav.html' %}
     </nav>
     <nav class="left large-space surface-variant m">
         {% include 'partials/nav.html' %}
     </nav>
+    <nav class="bottom surface-variant s">
+        <a class="auto-width {% if request.endpoint == 'index' %}active{% endif %}" href="{{ url_for('index') }}">
+            <i>home</i>
+        </a>
+        <a class="{% if request.endpoint.startswith('owner.') %}active{% endif %}" href="{{ url_for('owner.list_owners') }}">
+            <i>group</i>
+        </a>
+        <a class="{% if request.endpoint.startswith('charges.') %}active{% endif %}" href="{{ url_for('charges.list_charges') }}">
+            <i>construction</i>
+        </a>
+    </nav>
     <dialog id="dialog" class="modal no-elevate"></dialog>
-    <main class="responsive">
+    {% endif %}
+    <main id="content" class="responsive">
+        {% if not db_exists %}
+        <article class="middle medium middle-align center-align">
+            <div>
+                <i class="extra">database_off</i>
+                <h5>No database found</h5>
+                <p>Click the button to create a new database</p>
+                <div class="space"></div>
+                <nav class="center-align">
+                    <button hx-get="{{ url_for('initial_db_setup') }}">
+                        <i>database</i>
+                        <span>Create database</span>
+                    </button>
+                </nav>
+            </div>
+        </article>
+        {% else %}
         {% block body_content %}{% endblock %}
-        <div id="flash-messages" hx-get="{{ url_for('flash_fragment') }}" hx-trigger="flash-refresh from:body">
-            {% include 'partials/flash_messages.html' %}
-        </div>
+        {% endif %}
     </main>
+    <div id="flash-messages" hx-get="{{ url_for('flash_fragment') }}" hx-trigger="flash-refresh from:body">
+        {% include 'partials/flash_messages.html' %}
+    </div>
     <script type="module" src="https://cdn.jsdelivr.net/npm/beercss@3.11.33/dist/cdn/beer.min.js"></script>
     <script type="module" src="https://cdn.jsdelivr.net/npm/material-dynamic-colors@1.1.2/dist/cdn/material-dynamic-colors.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.6/dist/htmx.min.js"></script>

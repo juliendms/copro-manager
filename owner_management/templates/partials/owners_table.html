@@ -2,8 +2,8 @@
   <thead>
     <tr>
       <th>Name</th>
-      <th>Emails</th>
-      <th>Lot Number</th>
+      <th class="l m">Emails</th>
+      <th class="l m">Lot Number</th>
       <th class="right-align right-padding">Share</th>
       <th class="left-padding">Actions</th>
     </tr>
@@ -12,8 +12,8 @@
     {% for owner in owners %}
     <tr>
       <td>{{ owner.name }}</td>
-      <td>{{ owner.emails | map(attribute='email') | join(', ') }}</td>
-      <td>{{ owner.lot_number }}</td>
+      <td class="l m">{{ owner.emails | map(attribute='email') | join(', ') }}</td>
+      <td class="l m">{{ owner.lot_number }}</td>
       <td class="right-align right-padding">{{ owner.share }}</td>
       <td class="left-padding" style="width: 1%">
         <nav class="group">
