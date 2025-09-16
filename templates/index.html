@@ -6,7 +6,7 @@
     {% if dashboard_charges %}
         <button class="extend circle right-round top-round no-margin"
                 data-ui="dialog"
-                hx-get="{{ url_for('charges.dialog_fragment') }}?mode=add&source=dashboard"
+                hx-get="{{ url_for('charges.dialog_fragment') }}?mode=add&target=repartition"
                 hx-target="#dialog"
                 hx-swap="innerHTML">
             <i>assignment_add</i>
@@ -63,17 +63,17 @@
           <p>Either all charges are paid or new, or there is no charge.</p>
           <div class="space"></div>
           <nav class="center-align">
+            <a  href="{{ url_for('charges.list_charges') }}" class="button border">
+                <i>construction</i>
+                <span>To the list of charges</span>
+            </a>
             <button data-ui="dialog"
-                    hx-get="{{ url_for('charges.dialog_fragment') }}?mode=add&source=dashboard"
+                    hx-get="{{ url_for('charges.dialog_fragment') }}?mode=add&target=repartition"
                     hx-target="#dialog"
                     hx-swap="innerHTML">
               <i>assignment_add</i>
               <span>Add a charge</span>
             </button>
-            <a  href="{{ url_for('charges.list_charges') }}" class="button primary">
-                <i>construction</i>
-                <span>To the list of charges</span>
-            </a>
           </nav>
         </div>
       </article>

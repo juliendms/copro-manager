@@ -195,5 +195,4 @@ def init_owner_data():
     owners = db.session.scalars(db.select(Owner).options(joinedload(Owner.emails))).unique().all()
     response = make_response(render_template('partials/owners_main_content.html', owners=owners, has_owners=len(owners) > 0))
     response.headers['HX-Trigger'] = 'flash-refresh,owner-changed'
-    # response.headers['HX-Refresh'] = 'true' # Remove hard refresh
     return response

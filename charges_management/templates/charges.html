@@ -3,24 +3,9 @@
 {% block title %}Charges List{% endblock %}
 
 {% block body_content %}
-    {% if has_charges %}
-    <button class="extend circle right-round top-round no-margin"
-        data-ui="dialog"
-        hx-get="{{ url_for('charges.dialog_fragment') }}?mode=add"
-        hx-target="#dialog"
-        hx-swap="innerHTML">
-            <i>assignment_add</i>
-            <span>Add a charge</span>
-    </button>
-
-    <div    id="charges-table"
-            class="top-margin"
-            hx-get="{{ url_for('charges.table_fragment') }}"
-            hx-trigger="load"
-            hx-swap="innerHTML">
-        <!-- table loads here via HTMX -->
-    </div>
-    {% else %}
+  {% if has_charges %}
+    {% include 'partials/charges_main_content.html' %}
+  {% else %}
     <article class="middle medium middle-align center-align">
       <div>
         <i class="extra">assignment_late</i>
@@ -28,12 +13,12 @@
         <p>There are no charges yet.</p>
         <div class="space"></div>
         <nav class="center-align">
-          <button data-ui="dialog" hx-get="{{ url_for('charges.dialog_fragment') }}?mode=add&source=dashboard" hx-target="#dialog" hx-swap="innerHTML">
+          <button data-ui="dialog" hx-get="{{ url_for('charges.dialog_fragment') }}?mode=add&target=charge_page" hx-target="#dialog" hx-swap="innerHTML">
             <i>assignment_add</i>
             <span>Add a charge</span>
           </button>
         </nav>
       </div>
     </article>
-    {% endif %}
+  {% endif %}
 {% endblock %}

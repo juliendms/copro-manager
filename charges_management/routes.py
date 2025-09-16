@@ -26,12 +26,21 @@ def table_fragment():
 @charges_bp.route('/fragments/dialog')
 def dialog_fragment():
     mode = request.args.get('mode', 'add')
-    source = request.args.get('source', 'charges_page')
+    target = request.args.get('target', 'charge_table') # New target parameter
     charge = None
     action_url = url_for('charges.add_charge')
     title = 'Add a charge'
     is_common = True  # Default for new charge
     owners = Owner.query.all()
+
+    # Determine form_hx_target and post_add_view based on the 'target' parameter
+    if target == 'repartition':
+        form_hx_target = 'this' # The form itself is the target, for redirect
+    elif target == 'charge_page':
+        form_hx_target = '#content' # To replace the main content area (charges page empty state)
+    else: # Default to 'charge_table'
+        form_hx_target = '#charges-table' # To replace only the charges table
+
     if mode == 'edit':
         charge_id = request.args.get('charge_id', type=int)
         if charge_id is None:
@@ -48,7 +57,8 @@ def dialog_fragment():
                            charge=charge,
                            is_common=is_common,
                            owners=owners,
-                           source=source)
+                           form_hx_target=form_hx_target,
+                           form_hx_swap='innerHTML') # Default swap for dialog forms
 
 @charges_bp.route('/fragments/type_fields')
 def type_fields():
@@ -72,8 +82,6 @@ def add_charge():
     if request.form.get('voting_date'):
         voting_date_str = request.form['voting_date']
         voting_date = datetime.strptime(voting_date_str, '%Y-%m-%d').date()
-
-    source = request.form.get('source', 'charges_page')
 
     payment_schedule = 'quarterly' if charge_type == 'common' else 'one_time'
 
@@ -130,16 +138,29 @@ def add_charge():
         db.session.commit()
         flash('Charge added successfully!', 'success')
 
-        if source == 'dashboard':
-            response = make_response()
-            response.headers['HX-Redirect'] = url_for('charges.view_repartition', charge_id=new_charge.id)
-            response.headers['HX-Trigger'] = 'flash-refresh,closeDialog'
-            return response
-
         if request.headers.get('HX-Request'):
-            response = make_response(render_template('partials/charges_table.html', charges=Charge.query.all()))
-            response.headers['HX-Trigger'] = 'flash-refresh,charge-changed,closeDialog'
-            return response
+            hx_target_header = request.headers.get('HX-Target') # Get HX-Target directly
+
+            if hx_target_header == 'content': # For charges_page full content refresh
+                # For charges_page, we need to re-render the entire main content area
+                charges = Charge.query.all()
+                has_charges = len(charges) > 0 
+                owners = Owner.query.all() # Assuming owners are needed for rendering charges_main_content
+                response_content = render_template('partials/charges_main_content.html', charges=charges, has_charges=has_charges, owners=owners)
+                response = make_response(response_content)
+                response.headers['HX-Trigger'] = 'flash-refresh,charge-changed,closeDialog'
+                return response
+            elif hx_target_header == 'charges-table': # For table-only refresh
+                response = make_response(render_template('partials/charges_table.html', charges=Charge.query.all()))
+                response.headers['HX-Trigger'] = 'flash-refresh,charge-changed,closeDialog'
+                return response
+            else: # Default case: assume redirect (e.g., from dashboard or if HX-Target is not explicitly set)
+                redirect_url = url_for('charges.view_repartition', charge_id=new_charge.id)
+                response = make_response('<div id="redirect-placeholder" style="display:none;"></div>') # Return minimal content
+                response.headers['HX-Redirect'] = redirect_url
+                response.headers['HX-Trigger'] = 'flash-refresh,closeDialog'
+                return response
+        
         if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
             return '', 201
         return redirect(url_for('charges.list_charges'))
