@@ -7,25 +7,21 @@
   {% if has_owners %}
     {% include 'partials/owners_main_content.html' %}
   {% else %}
-    <article class="middle medium middle-align center-align">
-      <div>
-        <i class="extra">group_off</i>
-        <h5>No owners found</h5>
-        <p>Either create a new owner or use the predefined list of owners</p>
-        <div class="space"></div>
-        <nav class="center-align">
-          <button class="border" data-ui="dialog"
-            hx-get="{{ url_for('owner.dialog_fragment') }}?mode=add&form_hx_target={{ '#content' | urlencode }}"
-            hx-target="#dialog" hx-swap="innerHTML">
+    {% set icon = 'group_off' %}
+    {% set title = 'No owners found' %}
+    {% set message = 'Either create a new owner or use the predefined list of owners' %}
+    {% set actions_html %}
+        <button class="border" data-ui="dialog"
+                hx-get="{{ url_for('owner.dialog_fragment') }}?mode=add&form_hx_target={{ '#content' | urlencode }}"
+                hx-target="#dialog" hx-swap="innerHTML">
             <i>person_add</i>
             <span>Add an owner</span>
-          </button>
-          <button hx-post="{{ url_for('owner.init_owner_data') }}" hx-trigger="click" hx-swap="innerHTML" hx-target="#content">
+        </button>
+        <button hx-post="{{ url_for('owner.init_owner_data') }}" hx-trigger="click" hx-swap="innerHTML" hx-target="#content">
             <i>upload</i>
             <span>Initialize predefined owners</span>
-          </button>
-        </nav>
-      </div>
-    </article>
+        </button>
+    {% endset %}
+    {% include 'partials/_empty_state.html' %}
   {% endif %}
 {% endblock %}

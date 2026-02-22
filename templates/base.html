@@ -20,7 +20,7 @@
         {% include 'partials/nav.html' %}
     </nav>
     <nav class="bottom surface-variant s">
-        <a class="auto-width {% if request.endpoint == 'index' %}active{% endif %}" href="{{ url_for('index') }}">
+        <a class="{% if request.endpoint == 'index' %}active{% endif %}" href="{{ url_for('index') }}">
             <i>home</i>
         </a>
         <a class="{% if request.endpoint.startswith('owner.') %}active{% endif %}" href="{{ url_for('owner.list_owners') }}">
@@ -34,22 +34,18 @@
     {% endif %}
     <main id="content" class="responsive">
         {% if not db_exists %}
-        <article class="middle medium middle-align center-align">
-            <div>
-                <i class="extra">database_off</i>
-                <h5>No database found</h5>
-                <p>Click the button to create a new database</p>
-                <div class="space"></div>
-                <nav class="center-align">
-                    <button hx-get="{{ url_for('initial_db_setup') }}">
-                        <i>database</i>
-                        <span>Create database</span>
-                    </button>
-                </nav>
-            </div>
-        </article>
+            {% set icon = 'database_off' %}
+            {% set title = 'No database found' %}
+            {% set message = 'Click the button to create a new database' %}
+            {% set actions_html %}
+                <button hx-get="{{ url_for('initial_db_setup') }}">
+                    <i>database</i>
+                    <span>Create database</span>
+                </button>
+            {% endset %}
+            {% include 'partials/_empty_state.html' %}
         {% else %}
-        {% block body_content %}{% endblock %}
+            {% block body_content %}{% endblock %}
         {% endif %}
     </main>
     <div id="flash-messages" hx-get="{{ url_for('flash_fragment') }}" hx-trigger="flash-refresh from:body">

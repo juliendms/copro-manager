@@ -6,19 +6,15 @@
   {% if has_charges %}
     {% include 'partials/charges_main_content.html' %}
   {% else %}
-    <article class="middle medium middle-align center-align">
-      <div>
-        <i class="extra">assignment_late</i>
-        <h5>No charges found</h5>
-        <p>There are no charges yet.</p>
-        <div class="space"></div>
-        <nav class="center-align">
-          <button data-ui="dialog" hx-get="{{ url_for('charges.dialog_fragment') }}?mode=add&target=charge_page" hx-target="#dialog" hx-swap="innerHTML">
+    {% set icon = 'assignment_late' %}
+    {% set title = 'No charges found' %}
+    {% set message = 'There are no charges yet.' %}
+    {% set actions_html %}
+        <button data-ui="dialog" hx-get="{{ url_for('charges.dialog_fragment') }}?mode=add&target=charge_page" hx-target="#dialog" hx-swap="innerHTML">
             <i>assignment_add</i>
             <span>Add a charge</span>
-          </button>
-        </nav>
-      </div>
-    </article>
+        </button>
+    {% endset %}
+    {% include 'partials/_empty_state.html' %}
   {% endif %}
 {% endblock %}
