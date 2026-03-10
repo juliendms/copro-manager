@@ -55,7 +55,7 @@ def add_owner():
             return response
         return redirect(url_for('owner.list_owners'))
 
-    new_owner = Owner(name=name, lot_number=lot_number, share=share)
+    new_owner = Owner(name=name, lot_number=lot_number, general_share=share)
     db.session.add(new_owner)
     db.session.flush()
 
@@ -89,7 +89,7 @@ def edit_owner(owner_id):
     owner = Owner.query.get_or_404(owner_id)
     owner.name = request.form['name']
     owner.lot_number = request.form['lot_number']
-    owner.share = int(request.form['share'])
+    owner.general_share = int(request.form['share'])
     emails_str = request.form['emails']
 
     # Check for lot number collision if it has changed
@@ -104,7 +104,7 @@ def edit_owner(owner_id):
             return redirect(url_for('owner.list_owners'))
     
     owner.lot_number = request.form['lot_number']
-    owner.share = int(request.form['share'])
+    owner.general_share = int(request.form['share'])
 
     OwnerEmail.query.filter_by(owner_id=owner.id).delete()
     db.session.flush()
@@ -174,7 +174,7 @@ def init_owner_data():
             owner_instance = Owner(
                 name=name,
                 lot_number=lot_number,
-                share=share
+                general_share=share
             )
             db.session.add(owner_instance)
             db.session.flush()

@@ -1,0 +1,38 @@
+{% from "dialog.html" import dialog %}
+
+{% call dialog(title, action_url, method='POST', form_hx_post=action_url, form_hx_target=form_hx_target, form_hx_swap=form_hx_swap) %}
+  <div class="field label border">
+    <input type="text" id="name" name="name"
+           value="{{ lce.name if lce else '' }}" required>
+    <label for="name">Name</label>
+  </div>
+  {% if owners %}
+  <fieldset>
+    <legend>Select the applicable owners</legend>
+    {% for owner in owners %}
+    <div class="row middle-align tiny-padding">
+      <label class="checkbox">
+        <input type="checkbox"
+               name="member_{{ owner.id }}"
+               id="chk_{{ owner.id }}"
+               {% if owner.id in active_owner_ids %}checked{% endif %}
+               onchange="toggleShare(this, 'share_{{ owner.id }}')">
+        <span></span>
+      </label>
+      <div class="max">
+        {{ owner.name }}
+        <span class="secondary-text small-text">Lot {{ owner.lot_number }}</span>
+      </div>
+      <div class="field label small border" style="width:150px;">
+        <input type="number" min="1"
+               name="share_{{ owner.id }}"
+               id="share_{{ owner.id }}"
+               value="{{ shares_map.get(owner.id, '') }}"
+               {% if owner.id not in active_owner_ids %}disabled{% endif %}>
+        <label>Share</label>
+      </div>
+    </div>
+    {% endfor %}
+  </fieldset>
+  {% endif %}
+{% endcall %}

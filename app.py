@@ -8,8 +8,9 @@ from sqlalchemy.orm import joinedload
 from dotenv import load_dotenv
 from app_utils import no_cache
 
-from owner_management import owner_bp # Import the blueprint
-from charges_management import charges_bp # Import the charges blueprint
+from owner_management import owner_bp
+from charges_management import charges_bp
+from lce_management import lce_bp
 
 load_dotenv()
 
@@ -32,8 +33,9 @@ def inject_db_exists():
         g.db_exists = os.path.exists(database_path)
     return dict(db_exists=g.db_exists)
 
-app.register_blueprint(owner_bp) # Register the blueprint
-app.register_blueprint(charges_bp) # Register the charges blueprint
+app.register_blueprint(owner_bp)
+app.register_blueprint(charges_bp)
+app.register_blueprint(lce_bp)
 
 @app.route('/initial_db_setup')
 def initial_db_setup():

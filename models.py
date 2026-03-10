@@ -4,10 +4,37 @@ from sqlalchemy.ext.associationproxy import association_proxy
 
 db = SQLAlchemy()
 
+
+class LCEShare(db.Model):
+    __tablename__ = 'lce_share'
+    element_id = db.Column(db.Integer, db.ForeignKey('limited_common_element.id'), primary_key=True)
+    owner_id = db.Column(db.Integer, db.ForeignKey('owner.id'), primary_key=True)
+    share = db.Column(db.Integer, nullable=False)
+
+    element = db.relationship('LimitedCommonElement', back_populates='shares')
+    owner = db.relationship('Owner', back_populates='lce_shares')
+
+
+class LimitedCommonElement(db.Model):
+    __tablename__ = 'limited_common_element'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    description = db.Column(db.String(200), nullable=True)
+
+    shares = db.relationship('LCEShare', back_populates='element', cascade="all, delete-orphan")
+    charges = db.relationship('Charge', back_populates='limited_common_element')
+
+    owners = association_proxy('shares', 'owner')
+
+    def __repr__(self):
+        return f'<LimitedCommonElement {self.name}>'
+
+
 class ChargeRepartition(db.Model):
     __tablename__ = 'charge_repartition'
     charge_id = db.Column(db.Integer, db.ForeignKey('charge.id'), primary_key=True)
     owner_id = db.Column(db.Integer, db.ForeignKey('owner.id'), primary_key=True)
+    share_snapshot = db.Column(db.Integer, nullable=False)
 
     charge = db.relationship('Charge', back_populates='repartitions')
     owner = db.relationship('Owner', back_populates='repartitions')
@@ -19,12 +46,12 @@ class Owner(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     lot_number = db.Column(db.String(10), unique=True, nullable=False)
-    share = db.Column(db.Integer, nullable=False) # Changed to Integer
+    general_share = db.Column(db.Integer, nullable=False)
 
-    # Establish a relationship with OwnerEmail
     emails = db.relationship('OwnerEmail', backref='owner', lazy=True, cascade="all, delete-orphan")
     repartitions = db.relationship('ChargeRepartition', back_populates='owner', lazy='dynamic', cascade="all, delete-orphan")
-    
+    lce_shares = db.relationship('LCEShare', back_populates='owner', lazy='dynamic', cascade="all, delete-orphan")
+
     charges = association_proxy('repartitions', 'charge')
 
     def __repr__(self):
@@ -42,14 +69,16 @@ class Charge(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     description = db.Column(db.String(200), nullable=False)
     total_amount = db.Column(db.Float, nullable=False)
-    type = db.Column(db.String(50), nullable=False, default='common') # 'common' or 'extraordinary'
-    payment_schedule = db.Column(db.String(50), nullable=False, default='one_time') # 'one_time' or 'quarterly'
-    year = db.Column(db.Integer, nullable=True) # Made nullable
-    purpose = db.Column(db.String(200), nullable=True) # New field for extraordinary charges
+    type = db.Column(db.String(50), nullable=False, default='common')
+    payment_schedule = db.Column(db.String(50), nullable=False, default='one_time')
+    year = db.Column(db.Integer, nullable=True)
+    purpose = db.Column(db.String(200), nullable=True)
     voting_date = db.Column(Date, nullable=True)
     date_created = db.Column(db.DateTime, nullable=False, default=db.func.current_timestamp())
+    limited_common_element_id = db.Column(db.Integer, db.ForeignKey('limited_common_element.id'), nullable=True)
 
     repartitions = db.relationship('ChargeRepartition', back_populates='charge', cascade="all, delete-orphan")
+    limited_common_element = db.relationship('LimitedCommonElement', back_populates='charges')
     owners = association_proxy('repartitions', 'owner')
 
     @property
@@ -78,13 +107,13 @@ class Charge(db.Model):
 
 class PaymentInstallment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    
+
     charge_repartition_charge_id = db.Column(db.Integer, nullable=False)
     charge_repartition_owner_id = db.Column(db.Integer, nullable=False)
-    
+
     quarter = db.Column(db.Integer, nullable=True)
     amount = db.Column(db.Float, nullable=False)
-    
+
     email_sent_date = db.Column(db.DateTime, nullable=True)
     paid_date = db.Column(db.DateTime, nullable=True)
 

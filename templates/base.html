@@ -21,13 +21,16 @@
     </nav>
     <nav class="bottom surface-variant s">
         <a class="{% if request.endpoint == 'index' %}active{% endif %}" href="{{ url_for('index') }}">
-            <i>home</i>
+            <i>home_work</i>
         </a>
         <a class="{% if request.endpoint.startswith('owner.') %}active{% endif %}" href="{{ url_for('owner.list_owners') }}">
             <i>group</i>
         </a>
         <a class="{% if request.endpoint.startswith('charges.') %}active{% endif %}" href="{{ url_for('charges.list_charges') }}">
             <i>construction</i>
+        </a>
+        <a class="{% if request.endpoint.startswith('lce.') %}active{% endif %}" href="{{ url_for('lce.list_lces') }}">
+            <i>domain</i>
         </a>
     </nav>
     <dialog id="dialog" class="modal no-elevate"></dialog>

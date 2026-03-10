@@ -54,7 +54,7 @@
             <p>Je vous informe que votre provision de charges pour l'année <strong>{{ installment.charge_repartition.charge.year }}</strong> s'élève à <strong>{{ "%.2f"|format(yearly_amount) }} EUR</strong>, conformément au budget prévisionnel de la copropriété établi à <strong>{{ "%.2f"|format(installment.charge_repartition.charge.total_amount) }} EUR</strong>, voté lors de l'assemblée générale du <strong>{{ installment.charge_repartition.charge.voting_date.strftime('%Y-%m-%d') }}</strong>.</p>
             <ul class="highlight">
                 <li><strong>Lot(s) :</strong> {{ installment.charge_repartition.owner.lot_number }}</li>
-                <li><strong>Tantième :</strong> {{ installment.charge_repartition.owner.share }}</li>
+                <li><strong>Tantième :</strong> {{ installment.charge_repartition.share_snapshot }}</li>
                 <li><strong>Montant restant dû pour la période: {{ "%.2f"|format(installment.amount) }} EUR</strong></li>
             </ul>
             {% elif installment.charge_repartition.charge.type == 'extraordinary' %}
@@ -67,7 +67,7 @@
             </p>
             <ul class="highlight">
                 <li><strong>Lot(s) :</strong> {{ installment.charge_repartition.owner.lot_number }}</li>
-                <li><strong>Tantième :</strong> {{ installment.charge_repartition.owner.share }}</li>
+                <li><strong>Tantième :</strong> {{ installment.charge_repartition.share_snapshot }}</li>
                 <li><strong>Quote-part: {{ "%.2f"|format(installment.amount) }} EUR</strong></li>
             </ul>
             {% endif %}

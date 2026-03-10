@@ -18,7 +18,10 @@
           {% if charge.type == 'common' %}
             Year: {{ charge.year }}
           {% elif charge.type == 'extraordinary' %}
-            Purpose: {{ charge.purpose }}
+            {{ charge.purpose }}
+            {% if charge.limited_common_element %}
+              <div class="small-text">{{ charge.limited_common_element.name }}</div>
+            {% endif %}
           {% endif %}
         </td>
         <td>

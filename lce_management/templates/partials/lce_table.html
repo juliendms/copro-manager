@@ -1,0 +1,41 @@
+<table class="border">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th class="right-align right-padding">Members</th>
+      <th class="left-padding">Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for lce in lces %}
+      <tr>
+        <td>{{ lce.name }}</td>
+        <td class="right-align right-padding">{{ lce.shares | length }}</td>
+        <td class="left-padding" style="width: 1%">
+          <nav class="group">
+            <button class="small circle border"
+              data-ui="dialog"
+              hx-get="{{ url_for('lce.dialog_fragment') }}?mode=edit&lce_id={{ lce.id }}"
+              hx-target="#dialog"
+              hx-swap="innerHTML">
+              <i>edit</i>
+            </button>
+            <button class="small circle border holding"
+                    hx-delete="{{ url_for('lce.delete_lce', lce_id=lce.id) }}"
+                    hx-target="#lce-table"
+                    hx-swap="innerHTML"
+                    hx-trigger="hold-complete"
+                    onmousedown="startHold(this)"
+                    onmouseup="cancelHold(this)"
+                    onmouseleave="cancelHold(this)"
+                    ontouchstart="startHold(this)"
+                    ontouchend="cancelHold(this)">
+              <i>delete</i>
+              <div class="tooltip left">Hold to delete</div>
+            </button>
+          </nav>
+        </td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>

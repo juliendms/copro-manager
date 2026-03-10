@@ -20,6 +20,7 @@ nav.max a {
 dialog {
   width: 800px;
   background-color: var(--surface-container-low);
+  max-block-size: 90%;
 }
 
 /* Hold to delete button: transition */

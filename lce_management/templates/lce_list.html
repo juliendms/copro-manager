@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title %}Limited Common Elements{% endblock %}
+
+{% block body_content %}
+  {% if has_lces %}
+    {% include 'partials/lce_main_content.html' %}
+  {% else %}
+    {% set icon = 'domain' %}
+    {% set title = 'No elements defined' %}
+    {% set message = 'Limited common elements define subsets of owners with specific shares (e.g. elevator, parking).' %}
+    {% set actions_html %}
+        <button data-ui="dialog"
+                hx-get="{{ url_for('lce.dialog_fragment') }}?mode=add&target=lce_page"
+                hx-target="#dialog" hx-swap="innerHTML">
+            <i>domain_add</i>
+            <span>Add an element</span>
+        </button>
+    {% endset %}
+    {% include 'partials/_empty_state.html' %}
+  {% endif %}
+{% endblock %}

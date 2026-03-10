@@ -11,37 +11,16 @@
   <label for="voting_date">Voting Date (Optional)</label>
 </div>
 
-<fieldset>
-  <legend>Select one or more owners</legend>
-  {% if charge and charge.owners %}
-    {% set charge_owner_ids = charge.owners | map(attribute='id') | list %}
-  {% else %}
-    {% set charge_owner_ids = [] %}
-  {% endif %}
-  <div class="grid">
-    {% set midpoint = (owners | length / 2) | round(method='ceil') | int %}
-    <div class="s12 m6 l6">
-      <nav class="vertical">
-        {% for owner in owners[:midpoint] %}
-        <label class="checkbox">
-          <input type="checkbox" name="owners" value="{{ owner.id }}"
-                 {% if charge is none or owner.id in charge_owner_ids %}checked{% endif %}>
-          <span>{{ owner.name }}</span>
-        </label>
-        {% endfor %}
-      </nav>
-    </div>
-    <div class="s12 m6 l6">
-      <nav class="vertical">
-        {% for owner in owners[midpoint:] %}
-        <label class="checkbox">
-          <input type="checkbox" name="owners" value="{{ owner.id }}"
-                 {% if charge is none or owner.id in charge_owner_ids %}checked{% endif %}>
-          <span>{{ owner.name }}</span>
-        </label>
-        {% endfor %}
-      </nav>
-    </div>
-  </div>
-</fieldset>
-
+{% if lce_list %}
+<div class="field label suffix border">
+  <select id="limited_common_element_id" name="limited_common_element_id"
+          {% if charge and charge.repartitions %}disabled{% endif %}>
+    <option value="" {% if not charge or not charge.limited_common_element_id %}selected{% endif %}>General common elements</option>
+    {% for lce in lce_list %}
+    <option value="{{ lce.id }}" {% if charge and charge.limited_common_element_id == lce.id %}selected{% endif %}>{{ lce.name }}</option>
+    {% endfor %}
+  </select>
+  <label for="limited_common_element_id">Applies to</label>
+  <i>arrow_drop_down</i>
+</div>
+{% endif %}

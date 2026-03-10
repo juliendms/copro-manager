@@ -5,3 +5,6 @@ google-auth
 google-auth-oauthlib
 jinja2
 python-dotenv
+flask
+flask-sqlalchemy
+pytest

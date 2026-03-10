@@ -29,7 +29,7 @@
         {% endif %}
     </td>
     <td class="l">{{ installment.charge_repartition.owner.lot_number }}</td>
-    <td class="l right-align">{{ installment.charge_repartition.owner.share }}</td>
+    <td class="l right-align">{{ installment.charge_repartition.share_snapshot }}</td>
     <td class="right-align right-padding">{{ "%.2f" | format(installment.amount) }}</td>
     <td class="left-padding" style="width: 1%">
         <nav class="group">

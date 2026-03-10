@@ -15,7 +15,7 @@
     <label for="lot_number">Lot Number</label>
   </div>
   <div class="field label border">
-    <input type="number" id="share" name="share" value="{{ owner.share if owner else '' }}" required>
+    <input type="number" id="share" name="share" value="{{ owner.general_share if owner else '' }}" required>
     <label for="share">Share</label>
   </div>
 {% endcall %}

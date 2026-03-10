@@ -20,6 +20,25 @@ document.body.addEventListener('click', function(evt) {
     }
 });
 
+// Enable/disable share input when an LCE member toggle is switched
+function toggleShare(checkbox, inputId) {
+    const input = document.getElementById(inputId);
+    if (checkbox.checked) {
+        input.disabled = false;
+        input.required = true;
+        input.focus();
+    } else {
+        input.disabled = true;
+        input.required = false;
+        input.value = '';
+        const field = input.closest('.field');
+        if (field) {
+            field.classList.remove('invalid');
+            field.querySelector('span.error')?.remove();
+        }
+    }
+}
+
 // Hold button functionality
 const holdDuration = 2000;
 let holdTimer = null;
