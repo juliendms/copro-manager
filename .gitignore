@@ -16,3 +16,6 @@ token.json
 
 # Owner management data
 owner_management/data/
+
+# Claude
+.claude/
